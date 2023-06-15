@@ -184,8 +184,8 @@ namespace PixelDrawer.Model
         public readonly string Name;
         public ObservableCollection<TestLayer> Layers { get; private set; }
 
-        private Stack<ObservableCollection<TestLayer>> projectUndoStack;
-        private Stack<ObservableCollection<TestLayer>> projectRedoStack;
+        private Stack<ObservableCollection<TestLayer>> projectUndoStack = new Stack<ObservableCollection<TestLayer>>(20);
+        private Stack<ObservableCollection<TestLayer>> projectRedoStack = new Stack<ObservableCollection<TestLayer>>(20);
 
         public TestProject(string name, Color backgroundColor, int width, int height)
         {
@@ -210,8 +210,10 @@ namespace PixelDrawer.Model
             if (CanUndo())
             {
                 var temp = projectUndoStack.Pop();
+                var newArray = new TestLayer[temp.Count];
+                temp.CopyTo(newArray, 0);
                 Layers = temp;
-                projectRedoStack.Push(temp);
+                projectRedoStack.Push(new ObservableCollection<TestLayer>(newArray));
             }
         }
 
@@ -220,8 +222,10 @@ namespace PixelDrawer.Model
             if (CanRedo())
             {
                 var temp = projectRedoStack.Pop();
+                var newArray = new TestLayer[temp.Count];
+                temp.CopyTo(newArray, 0);
                 Layers = temp;
-                projectUndoStack.Push(temp);
+                projectUndoStack.Push(new ObservableCollection<TestLayer>(newArray));
             }
         }
 
@@ -233,6 +237,11 @@ namespace PixelDrawer.Model
         public bool CanUndo()
         {
             return projectUndoStack.Count == 0 ? false : true;
+        }
+
+        public void PushToUndoStack(ObservableCollection<TestLayer> layers)
+        {
+            projectUndoStack.Push(new ObservableCollection<TestLayer>(layers));
         }
     }
 

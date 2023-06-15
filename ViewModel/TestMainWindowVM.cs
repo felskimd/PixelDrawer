@@ -139,6 +139,7 @@ namespace PixelDrawer.ViewModel
                 {
                     case 0:
                         var tool0 = Tools.SelectedTool as TestPencilTool;
+                        Projects.SelectedProject.PushToUndoStack(Projects.SelectedProject.Layers);
                         tool0.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint, Colors.SelectedColor);
                         break;
                     case 1:
@@ -155,6 +156,7 @@ namespace PixelDrawer.ViewModel
                         break;
                     case 4:
                         var tool4 = Tools.SelectedTool as TestEraserTool;
+                        Projects.SelectedProject.PushToUndoStack(Projects.SelectedProject.Layers);
                         tool4.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
                         break;
                 }

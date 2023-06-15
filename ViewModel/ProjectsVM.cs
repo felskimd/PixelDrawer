@@ -35,6 +35,17 @@ namespace PixelDrawer.ViewModel
             }
         }
 
+        private TestLayer? scale;
+        public TestLayer Scale
+        {
+            get => scale;
+            set
+            {
+                scale = value;
+                OnPropertyChanged("Scale");
+            }
+        }
+
         private TestProjects Projects = TestProjects.Current;
         public readonly ObservableCollection<TestProject> ProjectsList;
 

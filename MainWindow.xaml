@@ -1,0 +1,104 @@
+﻿<Window x:Class="PixelDrawer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:PixelDrawer"
+        xmlns:vm="clr-namespace:PixelDrawer.ViewModel"
+        mc:Ignorable="d"
+        Title="PixelDrawer" Height="800" Width="1200">
+    <Window.DataContext>
+        <vm:MainWindowVM/>
+    </Window.DataContext>
+    <Grid x:Name="layoutGrid">
+        <DockPanel LastChildFill="True">
+            <Menu DockPanel.Dock="Top" Height="25" VerticalAlignment="Top">
+                <MenuItem Header="File">
+                    <MenuItem Header="Create" Command="{Binding ShowCreateWindowCmd}" ></MenuItem>
+                    <MenuItem Header="Open" Command="{Binding ShowOpenWindowCmd}"></MenuItem>
+                    <MenuItem Header="Save" ></MenuItem>
+                    <MenuItem Header="Save As" ></MenuItem>
+                    <Separator />
+                    <MenuItem Header="Exit" ></MenuItem>
+                </MenuItem>
+                <MenuItem Header="Edit" ></MenuItem>
+                <MenuItem Header="View" ></MenuItem>
+            </Menu>
+            <StatusBar DockPanel.Dock="Bottom" Background="DarkGray" Height="25">
+                <TextBlock Text="x:"/>
+                <TextBlock x:Name="xTextBlock" Text="{Binding CurrentPoint.X,UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Text="y:"/>
+                <TextBlock x:Name="yTextBlock" Text="{Binding CurrentPoint.Y,UpdateSourceTrigger=PropertyChanged}"/>
+            </StatusBar>
+            <ToolBarTray DockPanel.Dock="Left" Background="DimGray" Orientation="Vertical">
+                <ToolBar ItemsSource="{Binding Tools, Mode=TwoWay}" Header="Tools">
+                    <ToolBar.ItemTemplate>
+                        <DataTemplate>
+                            <RadioButton Style="{StaticResource {x:Type ToggleButton}}" GroupName="Tools" Content="{Binding Name}">
+                                <behaviors:Interaction.Triggers>
+                                    <behaviors:EventTrigger EventName="Checked">
+                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.ChangeSelectedToolCmd }" CommandParameter="{Binding Name}" />
+                                    </behaviors:EventTrigger>
+                                </behaviors:Interaction.Triggers>
+                            </RadioButton>
+                        </DataTemplate>
+                    </ToolBar.ItemTemplate>
+                </ToolBar>
+                <ToolBar Header="Color">
+                    <tk:ColorPicker SelectedColor="{Binding SelectedColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="80" AvailableColorsSortingMode="HueSaturationBrightness"/>
+                </ToolBar>
+            </ToolBarTray>
+            <ToolBarTray DockPanel.Dock="Right" Background="DimGray" Orientation="Vertical" MinWidth="100">
+                <ToolBar x:Name="toolPropertiesBar" VerticalAlignment="Top" Header="Tool Properties" Width="100">
+                    <ItemsControl ItemsSource="{Binding SelectedToolPropertiesList, Mode=TwoWay}"/>
+                </ToolBar>
+            </ToolBarTray>
+            <TabControl x:Name="projects"  Background="DimGray" ItemsSource="{Binding Tabs, Mode=TwoWay}" SelectedItem="{Binding SelectedTabItem, Mode=TwoWay}">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Header}"/>
+                            <Image Source="/closeImg.bmp" Margin="5, 0, 0, 0" Width="9" Height="9">
+                                <behaviors:Interaction.Triggers>
+                                    <behaviors:EventTrigger EventName="MouseUp">
+                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.TabControlCloseCmd }" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.SelectedTabItem }" />
+                                    </behaviors:EventTrigger>
+                                </behaviors:Interaction.Triggers>
+                            </Image>
+                        </StackPanel>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
+                    <DataTemplate x:Name="imgtemplate">
+                        <Grid x:Name="imggrid">
+                            <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+                                <Border BorderBrush="Black" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" >
+                                    <Image x:Name="img" Source="{Binding Content, UpdateSourceTrigger=PropertyChanged}" Focusable="True" RenderOptions.BitmapScalingMode="NearestNeighbor">
+                                        <!--<Image.RenderTransform>
+                                            <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </Image.RenderTransform>-->
+                                        <behaviors:Interaction.Triggers>
+                                            <behaviors:EventTrigger EventName="MouseMove">
+                                                <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.DrawMouseMoveCmd }" PassEventArgsToCommand="True" />
+                                            </behaviors:EventTrigger>
+                                            <behaviors:EventTrigger EventName="MouseWheel">
+                                                <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MouseWheelCmd }" PassEventArgsToCommand="True" />
+                                            </behaviors:EventTrigger>
+                                        </behaviors:Interaction.Triggers>
+                                    </Image>
+                                    <Border.RenderTransform>
+                                        <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </Border.RenderTransform>
+                                </Border>
+                                    <!--<Rectangle Stroke = "DarkOrange" Visibility = "Collapsed" Fill = "#77EEEEEE"></Rectangle>-->
+                                <!--</Canvas>-->
+                            </ScrollViewer>
+                        </Grid>
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+            </TabControl>
+        </DockPanel>
+    </Grid>
+</Window>

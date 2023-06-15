@@ -1,0 +1,45 @@
+﻿<Window x:Class="PixelDrawer.CreateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:local="clr-namespace:PixelDrawer"
+        xmlns:vm="clr-namespace:PixelDrawer.ViewModel"
+        mc:Ignorable="d"
+        Title="CreateWindow" Height="150" Width="260" x:Name="createWindow_Window">
+    <Window.DataContext>
+        <vm:CreateWindowVM/>
+    </Window.DataContext>
+    <Grid>
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <GroupBox Header="Height (max 2048px)" Grid.Row="1" Grid.Column="0">
+                <TextBox PreviewTextInput="Numbers_PreviewTextInput" PreviewKeyDown="Numbers_PreviewKeyDown" TextChanged="Numbers_TextChanged" Name="createWindow_Height" MaxLength="4" MaxLines="1" Text="{Binding HeightText, Mode=TwoWay}"/>
+            </GroupBox>
+            <GroupBox Header="Width (max 2048px)" Grid.Row="1" Grid.Column="1">
+                <TextBox PreviewTextInput="Numbers_PreviewTextInput" PreviewKeyDown="Numbers_PreviewKeyDown" TextChanged="Numbers_TextChanged" Name="createWindow_Width" MaxLength="4" MaxLines="1" Text="{Binding WidthText, Mode=TwoWay}"/>
+            </GroupBox>
+            <GroupBox Header="Title" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+                <TextBox Name="createWindow_Title" MaxLength="32" MaxLines="1" Text="{Binding TitleText, Mode=TwoWay}"/>
+            </GroupBox>
+        </Grid>
+        <WrapPanel Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,15,10,10">
+            <Button x:Name="Accept_Button" IsDefault="True" MinWidth="60" Margin="0,0,10,0">Create
+                <behaviors:Interaction.Triggers>
+                    <behaviors:EventTrigger EventName="Click">
+                        <behaviors:InvokeCommandAction Command="{Binding AcceptCommand}" CommandParameter="{Binding ElementName=createWindow_Window}" />
+                    </behaviors:EventTrigger>
+                </behaviors:Interaction.Triggers>
+            </Button>
+            <Button IsCancel="True" MinWidth="60">Cancel</Button>
+        </WrapPanel>
+    </Grid>
+</Window>

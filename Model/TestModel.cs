@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Windows;
 using System.Reflection;
+using System.Windows.Controls;
 
 namespace PixelDrawer.Model
 {
@@ -179,13 +180,45 @@ namespace PixelDrawer.Model
         }
     }
 
-    public class TestProject
+    public class TestProject: INotifyPropertyChanged
     {
-        public readonly string Name;
+        public string Name { get; }
         public ObservableCollection<TestLayer> Layers { get; private set; }
+        public ObservableCollection<Image> Images { get; private set; }
 
-        private Stack<ObservableCollection<TestLayer>> projectUndoStack = new Stack<ObservableCollection<TestLayer>>(20);
-        private Stack<ObservableCollection<TestLayer>> projectRedoStack = new Stack<ObservableCollection<TestLayer>>(20);
+        private int newLayersCount = 1;
+        private int NewLayersCount { get
+            {
+                newLayersCount++;
+                return newLayersCount;
+            }
+            set 
+            { 
+            }
+        }
+
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+
+        private TestLayer selectedLayer;
+        public TestLayer SelectedLayer { get { return selectedLayer; }
+            set
+            {
+                selectedLayer = value;
+                OnPropertyChanged("SelectedLayer");
+            }
+        }
+
+        private double scale = 1.0;
+        public double Scale
+        {
+            get => scale;
+            set
+            {
+                scale = value;
+                OnPropertyChanged("Scale");
+            }
+        }
 
         public TestProject(string name, Color backgroundColor, int width, int height)
         {
@@ -194,6 +227,16 @@ namespace PixelDrawer.Model
             {
                 new TestLayer("Background", width, height, backgroundColor)
             };
+            var image = new Image();
+            image.Source = Layers.First().Bitmap;
+            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
+            Images = new ObservableCollection<Image>
+            {
+                image
+            };
+            Width = width;
+            Height = height;
+            SelectedLayer = Layers[0];
         }
 
         public TestProject(string name, WriteableBitmap bmp)
@@ -201,54 +244,71 @@ namespace PixelDrawer.Model
             Name = name;
             Layers = new ObservableCollection<TestLayer>
             {
-                new TestLayer("Background", bmp.Clone())
+                new TestLayer("Background", bmp)
             };
-        }
-
-        public void Undo()
-        {
-            if (CanUndo())
+            var image = new Image();
+            image.Source = Layers.First().Bitmap;
+            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
+            Images = new ObservableCollection<Image>
             {
-                var temp = projectUndoStack.Pop();
-                var newArray = new TestLayer[temp.Count];
-                temp.CopyTo(newArray, 0);
-                Layers = temp;
-                projectRedoStack.Push(new ObservableCollection<TestLayer>(newArray));
-            }
+                image
+            };
+            Width = (int)bmp.Width;
+            Height = (int)bmp.Height;
+            SelectedLayer = Layers[0];
         }
 
-        public void Redo()
+        public TestLayer AddLayer()
         {
-            if (CanRedo())
-            {
-                var temp = projectRedoStack.Pop();
-                var newArray = new TestLayer[temp.Count];
-                temp.CopyTo(newArray, 0);
-                Layers = temp;
-                projectUndoStack.Push(new ObservableCollection<TestLayer>(newArray));
-            }
+            Layers.Add(new TestLayer(NewLayersCount.ToString(), Width, Height));
+            SelectedLayer = Layers.Last();
+            return SelectedLayer;
         }
 
-        public bool CanRedo()
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
-            return projectRedoStack.Count == 0 ? false : true;
-        }
-
-        public bool CanUndo()
-        {
-            return projectUndoStack.Count == 0 ? false : true;
-        }
-
-        public void PushToUndoStack(ObservableCollection<TestLayer> layers)
-        {
-            projectUndoStack.Push(new ObservableCollection<TestLayer>(layers));
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
     }
 
-    public class TestLayer
+    public class TestLayer: INotifyPropertyChanged
     {
-        public readonly string Name;
-        public readonly WriteableBitmap Bitmap;
+        private string name;
+        public string Name { get { return name; }
+            set
+            {
+                name = value;
+                OnPropertyChanged("Name");
+            }
+        }
+
+        public WriteableBitmap Bitmap { get; }
+        public int Width { get; }
+        public int Height { get; }
+
+        private bool isVisible = true;
+        public bool IsVisible { get { return isVisible; }
+            set
+            {
+                isVisible = value;
+                OnPropertyChanged("IsVisible");
+                OnPropertyChanged("Visibility");
+            }
+        }
+
+        public Visibility Visibility { get { return isVisible ? Visibility.Visible : Visibility.Collapsed; } 
+            set
+            {
+                if (value == Visibility.Visible)
+                    IsVisible = true;
+                else
+                    IsVisible = false;
+                OnPropertyChanged("Visibility");
+                OnPropertyChanged("IsVisible");
+            }
+        }
 
         public TestLayer(string name, int width, int height)
         {
@@ -268,11 +328,17 @@ namespace PixelDrawer.Model
             Name = name;
             Bitmap = bmp;
         }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
     }
 
     public class TestProjects: INotifyPropertyChanged
     {
-        //singleton
         private static readonly TestProjects instance = new TestProjects();
         public static TestProjects Current => instance;
 
@@ -283,7 +349,6 @@ namespace PixelDrawer.Model
             ProjectsList = new ObservableCollection<TestProject>();
         }
 
-        //Methods
         public void AddProject(string title, int width, int height, Color backgroundColor)
         {
             ProjectsList.Add(new TestProject(title, backgroundColor, width, height));

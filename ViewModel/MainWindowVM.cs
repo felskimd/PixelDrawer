@@ -1,108 +1,37 @@
 ﻿using Microsoft.Win32;
-using Microsoft.Xaml.Behaviors;
 using PixelDrawer.Model;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media;
+using Microsoft.Xaml.Behaviors;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 
 namespace PixelDrawer.ViewModel
 {
-    public class MainWindowVM : INotifyPropertyChanged
+    class MainWindowVM
     {
+        public ToolsVM Tools { get; }
+        public ProjectsVM Projects { get; }
+        public ColorsVM Colors { get; }
+        public PointsVM Points { get; }
+
         public MainWindowVM()
         {
-            Tabs = new ObservableCollection<TabItem>();
-            Tools = new ObservableCollection<Tool>();
-            SelectedToolPropertiesList = new ObservableCollection<UIElement>();
-            Model.Tools.AddTools(Tools);
-            selectedColor = Colors.White;
-        }
-
-        private TabItem? selectedTabItem;
-        public TabItem? SelectedTabItem
-        {
-            get { return selectedTabItem; }
-            set
-            {
-                selectedTabItem = value;
-                OnPropertyChanged("SelectedPhone");
-            }
-        }
-
-        public ObservableCollection<TabItem> Tabs { get; set; }
-
-        public ObservableCollection<Tool> Tools { get; set; }
-
-        public ObservableCollection<UIElement> SelectedToolPropertiesList { get; set; }
-
-        private Tool? selectedTool;
-        public Tool? SelectedTool
-        {
-            get { return selectedTool; }
-            set
-            {
-                selectedTool = value;
-                if (SelectedToolPropertiesList.Count != 0)
-                    SelectedToolPropertiesList.Clear();
-                foreach (var toolProp in selectedTool.ToolProperties)
-                    SelectedToolPropertiesList.Add(toolProp);
-                OnPropertyChanged("SelectedTool");
-            }
-        }
-
-        private Color selectedColor;
-        public Color SelectedColor
-        {
-            get { return selectedColor; }
-            set
-            {
-                selectedColor = value;
-                OnPropertyChanged("SelectedColor");
-            }
-        }
-
-        private Point oldPoint;
-        public Point OldPoint
-        {
-            get { return oldPoint; }
-            set
-            {
-                oldPoint = value;
-                OnPropertyChanged("OldPoint");
-            }
-        }
-
-        private Point currentPoint;
-        public Point CurrentPoint
-        {
-            get { return currentPoint; }
-            set
-            {
-                currentPoint = value;
-                OnPropertyChanged("CurrentPoint");
-            }
-        }
-
-        private Point zoomCenterPoint;
-        public Point ZoomCenterPoint
-        {
-            get { return zoomCenterPoint; }
-            set
-            {
-                zoomCenterPoint = value;
-                OnPropertyChanged("ZoomCenterPoint");
-            }
+            Tools = new ToolsVM();
+            Projects = new ProjectsVM();
+            Colors = new ColorsVM();
+            Points = new PointsVM();
         }
 
         #region Commands
@@ -140,7 +69,7 @@ namespace PixelDrawer.ViewModel
                 return tabControlCloseCmd ??
                   (tabControlCloseCmd = new RelayCommand(obj =>
                   {
-                      Tabs.Remove(SelectedTabItem);
+                      TabControlClose();
                   }));
             }
         }
@@ -153,7 +82,20 @@ namespace PixelDrawer.ViewModel
                 return changeSelectedToolCmd ??
                   (changeSelectedToolCmd = new RelayCommand(obj =>
                   {
-                      ChangeSelectedTool(obj as string);
+                      ChangeSelectedTool(obj as int?);
+                  }));
+            }
+        }
+
+        private RelayCommand? changeSelectedLayerCmd;
+        public RelayCommand ChangeSelectedLayerCmd
+        {
+            get
+            {
+                return changeSelectedLayerCmd ??
+                  (changeSelectedLayerCmd = new RelayCommand(obj =>
+                  {
+                      ChangeSelectedLayer(obj as SelectionChangedEventArgs);
                   }));
             }
         }
@@ -183,37 +125,123 @@ namespace PixelDrawer.ViewModel
                   }));
             }
         }
+
+        private RelayCommand? addLayerCmd;
+        public RelayCommand AddLayerCmd
+        {
+            get
+            {
+                return addLayerCmd ??
+                    (addLayerCmd = new RelayCommand(obj =>
+                    {
+                        AddLayer();
+                    }, obj =>
+                    {
+                        if (Projects.SelectedProject != null) return true; 
+                        else return false;
+                    }
+                    ));
+            }
+        }
+
+        private RelayCommand? undoCmd;
+        public RelayCommand UndoCmd
+        {
+            get
+            {
+                return undoCmd ??
+                  (undoCmd = new RelayCommand(obj =>
+                  {
+                      Undo();
+                  }, obj =>
+                  {
+                      return false;
+                  }
+                  ));
+            }
+        }
+
+        private RelayCommand? redoCmd;
+        public RelayCommand RedoCmd
+        {
+            get
+            {
+                return redoCmd ??
+                  (redoCmd = new RelayCommand(obj =>
+                  {
+                      Redo();
+                  }, obj =>
+                  {
+                      return false;
+                  }
+                  ));
+            }
+        }
         #endregion
+
         private void MouseWheel(MouseWheelEventArgs e)
         {
-            var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
-            var tabItem = tabControl.SelectedItem as TabItem;
-            if (tabItem.Scale < 0.3 && e.Delta < 0)
+            //var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
+            //var tabItem = tabControl.SelectedItem as TabItem;
+
+            if (Projects.SelectedProject.Scale < 0.3 && e.Delta < 0)
             {
                 return;
             }
-            ZoomCenterPoint = new Point(CurrentPoint.X, CurrentPoint.Y);
-            tabItem.Scale += (double)e.Delta / 500;
+            Points.ZoomCenterPoint = new Point(Points.CurrentPoint.X, Points.CurrentPoint.Y);
+            if (Projects.SelectedProject.Scale < 7)
+                Projects.SelectedProject.Scale += (double)e.Delta / 500;
+            else if (Projects.SelectedProject.Scale < 14)
+                Projects.SelectedProject.Scale += (double)e.Delta / 250;
+            else
+                Projects.SelectedProject.Scale += (double)e.Delta / 125;
+            Projects.SelectedProject.Scale = Math.Round(Projects.SelectedProject.Scale, 2);
         }
 
         private void DrawMouseMove(MouseEventArgs e)
         {
             var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
-            var img = GetImageFromTabControl(tabControl);
-            OldPoint = CurrentPoint;
-            CurrentPoint = Application.Current.MainWindow.TranslatePoint(
-                e.GetPosition(Application.Current.MainWindow), img);
-            if (e.LeftButton == MouseButtonState.Pressed && selectedTool != null)
+            var image = GetImageFromTabControl(tabControl);
+            Points.OldPoint = Points.CurrentPoint;
+            Points.CurrentPoint = Application.Current.MainWindow.TranslatePoint(
+                e.GetPosition(Application.Current.MainWindow), image);
+            if (e.LeftButton == MouseButtonState.Pressed && Tools.SelectedTool != null)
             {
-                selectedTool.Execute(selectedTabItem.Content, OldPoint, CurrentPoint, SelectedColor);
+                switch (Tools.SelectedTool.ToolId)
+                {
+                    case 0:
+                        if (Projects.SelectedLayer != null)
+                        {
+                            var tool0 = Tools.SelectedTool as TestPencilTool;
+                            tool0.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint, Colors.SelectedColor);
+                        }
+                        break;
+                    case 1:
+                        var tool1 = Tools.SelectedTool as TestFillTool;
+                        tool1.Execute(Projects.SelectedLayer.Bitmap, Colors.SelectedColor);
+                        break; 
+                    case 2:
+                        var tool2 = Tools.SelectedTool as TestPipetteTool;
+                        Colors.SelectedColor = tool2.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
+                        break;
+                    case 3:
+                        var tool3 = Tools.SelectedTool as TestSelectionTool;
+                        //todo
+                        break;
+                    case 4:
+                        var tool4 = Tools.SelectedTool as TestEraserTool;
+                        tool4.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
+                        break;
+                }
             }
         }
 
-        public void AddPicture(string name, WriteableBitmap bmp)
+        public void AddProject(string name, WriteableBitmap bmp)
         {
-            var newTab = new TabItem(name, bmp);
-            Tabs.Add(newTab);
-            SelectedTabItem = newTab;
+            var newProject = new TestProject(name, bmp);
+            Projects.ProjectsList.Add(newProject);
+            Projects.AddProjectLayersView(newProject);
+            Projects.SelectedProject = newProject;
         }
 
         private void ShowCreateWindow()
@@ -232,68 +260,60 @@ namespace PixelDrawer.ViewModel
             if (openFileDialog.ShowDialog() == true)
             {
                 BitmapImage bitmap = new BitmapImage(new Uri(openFileDialog.FileName, UriKind.Absolute));
-                AddPicture(
+                AddProject(
                     openFileDialog.FileName,
                     new WriteableBitmap(bitmap));
             }
         }
 
-        private void ChangeSelectedTool(string tool)
+        private void ChangeSelectedTool(int? toolId)
         {
-            SelectedTool = Tools.Where(x => x.Name == tool).First();
+            Tools.SelectedTool = Tools.Tools[toolId ?? 0];
+        }
+
+        //private void ChangeSelectedLayer(string layerName)
+        //{
+        //    Projects.SelectedLayer = Projects.SelectedProject.Layers.Where(x => x.Name == layerName).First();
+        //}
+
+        public void ChangeSelectedLayer(SelectionChangedEventArgs args)
+        {
+            StackPanel stackPanel = (Application.Current.MainWindow.FindName("layersView") as ListBox).SelectedItem as StackPanel;
+            if (stackPanel != null)
+            {
+                Projects.SelectedProject.SelectedLayer = stackPanel.Tag as TestLayer;
+                Projects.SelectedLayer = stackPanel.Tag as TestLayer;
+            }
+        }
+
+        private void Undo()
+        {
+        }
+
+        private void Redo()
+        {
+        }
+
+        private void AddLayer()
+        {
+            var newLayer = Projects.SelectedProject.AddLayer();
+            Projects.LayersViews.Where(x => x.RelatedProject == Projects.SelectedProject).First().AddNewLayer(newLayer);
+        }
+
+        private void TabControlClose()
+        {
+            Projects.RemoveProjectLayersView(Projects.SelectedProject);
+            Projects.ProjectsList.Remove(Projects.SelectedProject);
         }
 
         private Image GetImageFromTabControl(TabControl tabControl)
         {
-            return VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(
-                VisualTreeHelper.GetChild(
+            return VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(
                     VisualTreeHelper.GetChild(
                         VisualTreeHelper.GetChild(
                             VisualTreeHelper.GetChild(
                                 VisualTreeHelper.GetChild(
-                                    VisualTreeHelper.GetChild(tabControl, 0), 0), 0), 0), 0), 0), 1), 0), 0) as Image;
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
-        }
-    }
-
-    public sealed class TabItem : DependencyObject, INotifyPropertyChanged
-    {
-        public string Header { get; set; }
-        private WriteableBitmap content;
-        public WriteableBitmap Content { get { return content; }
-            set
-            {
-                content = value;
-                OnPropertyChanged("Content");
-            }
-        }
-        private double scale;
-        public double Scale { get { return scale; }
-            set
-            {
-                scale = value;
-                OnPropertyChanged("Scale");
-            } 
-        }
-
-        public TabItem(string name, WriteableBitmap bmp)
-        {
-            Header = name;
-            Content = bmp;
-            scale = 1.0;
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+                                    VisualTreeHelper.GetChild(tabControl, 0), 0), 0), 0), 0), 0), 1), 0), 0), 0), 0), 0), 0), 0) as Image;
         }
     }
 }

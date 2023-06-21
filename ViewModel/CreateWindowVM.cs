@@ -84,10 +84,13 @@ namespace PixelDrawer.ViewModel
             height = int.Parse(heightText);
             if (width == 0) width = 1;
             if (height == 0) height = 1;
-            var mainWindowDataContext = Application.Current.MainWindow.DataContext;
-            var mainWindowVM = (MainWindowVM)mainWindowDataContext;
-            mainWindowVM.AddPicture(titleText,
-                BitmapFactory.New(width, height));
+            //var mainWindowDataContext = Application.Current.MainWindow.DataContext;
+            //var mainWindowVM = (MainWindowVM)mainWindowDataContext;
+            //mainWindowVM.AddPicture(titleText,
+            //    BitmapFactory.New(width, height));
+            //TestProjects.Current.AddProject(titleText, width, height, Colors.Transparent);
+            var mainWindowVM = Application.Current.MainWindow.DataContext as MainWindowVM;
+            mainWindowVM.AddProject(titleText, BitmapFactory.New(width, height));
             createWindow.DialogResult = true;
         }
 

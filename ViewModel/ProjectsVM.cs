@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -16,6 +18,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Xceed.Wpf.Toolkit.Core.Utilities;
 
 namespace PixelDrawer.ViewModel
@@ -87,40 +90,14 @@ namespace PixelDrawer.ViewModel
                 RelatedLayers = project.Layers;
                 for (var i = 0; i < project.Layers.Count; i++) 
                 {
-                    //ToMethod
-                    var stackPanel = new StackPanel();
-                    stackPanel.Orientation = Orientation.Horizontal;
-                    var visibilityToggleButton = new ToggleButton();
-                    var visibilityBinding = new Binding();
-                    visibilityBinding.Source = project.Layers[i];
-                    visibilityBinding.Mode = BindingMode.TwoWay;
-                    visibilityBinding.Path = new PropertyPath("IsVisible");
-                    visibilityToggleButton.SetBinding(ToggleButton.IsCheckedProperty, visibilityBinding);
-                    var layerNameBox = new TextBox();
-                    var layerNameBinding = new Binding();
-                    layerNameBinding.Source = project.Layers[i];
-                    layerNameBinding.Mode = BindingMode.TwoWay;
-                    layerNameBinding.Path = new PropertyPath("Name");
-                    layerNameBox.SetBinding(TextBox.TextProperty, layerNameBinding);
-                    var moveUpButton = new Button();
-                    var moveDownButton = new Button();
-                    stackPanel.Children.Add(visibilityToggleButton);
-                    stackPanel.Children.Add(layerNameBox);
-                    stackPanel.Children.Add(moveUpButton);
-                    stackPanel.Children.Add(moveDownButton);
-                    stackPanel.Tag = project.Layers[i];
-                    //var eventTrigger = new Microsoft.Xaml.Behaviors.EventTrigger("");
-                    //var commandBinding = new CommandBinding();
-                    //commandBinding.Command = new RelayCommand();
-                    //commandBinding.
-                    //stackPanel.CommandBindings.Add(commandBinding);
-                    Views.Add(stackPanel);
+                    AddNewLayer(project.Layers[i]);
                 }
             }
 
             public void AddNewLayer(TestLayer newLayer)
             {
                 var stackPanel = new StackPanel();
+                stackPanel.Tag = newLayer;
                 stackPanel.Orientation = Orientation.Horizontal;
                 var visibilityToggleButton = new ToggleButton();
                 var visibilityBinding = new Binding();
@@ -135,13 +112,54 @@ namespace PixelDrawer.ViewModel
                 layerNameBinding.Path = new PropertyPath("Name");
                 layerNameBox.SetBinding(TextBox.TextProperty, layerNameBinding);
                 var moveUpButton = new Button();
+                var moveUpImage = new Image();
+                moveUpImage.Source = new BitmapImage(new Uri("/Icons/UpArrow.bmp", UriKind.Relative));
+                moveUpButton.Content = moveUpImage;
+                moveUpButton.Click += (s, e) =>
+                {
+                    MoveLayerUp(s as Button);
+                };
                 var moveDownButton = new Button();
+                var moveDownImage = new Image();
+                moveDownImage.Source = new BitmapImage(new Uri("/Icons/DownArrow.bmp", UriKind.Relative));
+                moveDownButton.Content = moveDownImage;
+                moveDownButton.Click += (s, e) =>
+                {
+                    MoveLayerDown(s as Button);
+                };
                 stackPanel.Children.Add(visibilityToggleButton);
                 stackPanel.Children.Add(layerNameBox);
                 stackPanel.Children.Add(moveUpButton);
                 stackPanel.Children.Add(moveDownButton);
-                stackPanel.Tag = newLayer;
                 Views.Add(stackPanel);
+            }
+
+            private void MoveLayerUp(Button btn)
+            {
+                var stackPanel = btn.Parent as StackPanel;
+                var layer = stackPanel.Tag as TestLayer;
+                var index = RelatedLayers.IndexOf(layer);
+                if (index < RelatedLayers.Count - 1)
+                {
+                    RelatedLayers.RemoveAt(index);
+                    RelatedLayers.Insert(index + 1, layer);
+                    Views.RemoveAt(index);
+                    Views.Insert(index + 1, stackPanel);
+                }
+            }
+
+            private void MoveLayerDown(Button btn)
+            {
+                var stackPanel = btn.Parent as StackPanel;
+                var layer = stackPanel.Tag as TestLayer;
+                var index = RelatedLayers.IndexOf(layer);
+                if (index > 0)
+                {
+                    RelatedLayers.RemoveAt(index);
+                    RelatedLayers.Insert(index - 1, layer);
+                    Views.RemoveAt(index);
+                    Views.Insert(index - 1, stackPanel);
+                }
             }
 
             public ObservableCollection<UIElement> GetViews() => Views;

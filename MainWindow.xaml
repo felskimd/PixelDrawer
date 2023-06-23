@@ -19,9 +19,9 @@
             <RowDefinition Height="25"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition Width="86"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition Width="120"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Menu DockPanel.Dock="Top" Height="25" VerticalAlignment="Top" Grid.Column="0" Grid.ColumnSpan="3">
             <MenuItem Header="File">
@@ -70,7 +70,7 @@
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding Name}"/>
-                            <Image Source="/closeImg.bmp" Margin="5, 0, 0, 0" Width="9" Height="9">
+                            <Image Source="/Icons/closeImg.bmp" Margin="5, 0, 0, 0" Width="9" Height="9">
                                 <behaviors:Interaction.Triggers>
                                     <behaviors:EventTrigger EventName="MouseUp">
                                         <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.TabControlCloseCmd }" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Projects.SelectedProject }" />
@@ -83,7 +83,7 @@
                 <TabControl.ContentTemplate>
                     <DataTemplate x:Name="imgtemplate">
                         <Grid>
-                            <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+                            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
                                 <Border BorderBrush="Black" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" >
                                     <ItemsControl ItemsSource="{Binding Layers, UpdateSourceTrigger=PropertyChanged}">
                                         <ItemsControl.ItemsPanel>
@@ -131,11 +131,11 @@
                     </DataTemplate>
                 </TabControl.ContentTemplate>
             </TabControl>
-        <ToolBarTray Grid.Column="2" Grid.Row="1" Background="DimGray" Orientation="Vertical" MinWidth="100">
-            <ToolBar x:Name="toolPropertiesBar" VerticalAlignment="Top" Header="Tool Properties" Width="100">
+        <ToolBarTray Grid.Column="2" Grid.Row="1" Background="DimGray" Orientation="Vertical" Width="120">
+            <ToolBar x:Name="toolPropertiesBar" VerticalAlignment="Top" Header="Tool Properties" Width="120">
                 <ItemsControl ItemsSource="{Binding Tools.SelectedToolProperties.PropertiesView, Mode=OneWay}"/>
             </ToolBar>
-            <ToolBar x:Name="layersControlBar" VerticalAlignment="Top" Header="Layers">
+            <ToolBar x:Name="layersControlBar" VerticalAlignment="Top" Header="Layers" Width="120">
                 <ListBox x:Name="layersView">
                     <ListBox.ContextMenu>
                         <ContextMenu>
@@ -148,6 +148,24 @@
                             <behaviors:InvokeCommandAction Command="{Binding ChangeSelectedLayerCmd}" PassEventArgsToCommand="True"/>
                         </behaviors:EventTrigger>
                     </behaviors:Interaction.Triggers>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel VerticalAlignment="Top"  Orientation="Vertical">
+                                <VirtualizingStackPanel.LayoutTransform>
+                                    <ScaleTransform ScaleX="1" ScaleY="-1" />
+                                </VirtualizingStackPanel.LayoutTransform>
+                            </VirtualizingStackPanel>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="LayoutTransform">
+                                <Setter.Value>
+                                    <ScaleTransform ScaleX="1" ScaleY="-1" />
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
                 </ListBox>
                 <!--<ToolBar.ItemTemplate>
                         <DataTemplate>

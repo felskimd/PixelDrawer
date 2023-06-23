@@ -9,6 +9,8 @@
 
   <ItemGroup>
     <None Remove="CloseImg.bmp" />
+    <None Remove="Icons\DownArrow.bmp" />
+    <None Remove="Icons\UpArrow.bmp" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,7 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="CloseImg.bmp" />
+    <Resource Include="Icons\CloseImg.bmp" />
+    <Resource Include="Icons\DownArrow.bmp" />
+    <Resource Include="Icons\UpArrow.bmp" />
   </ItemGroup>
 
 </Project>

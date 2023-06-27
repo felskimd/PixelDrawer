@@ -177,6 +177,32 @@ namespace PixelDrawer.ViewModel
                   ));
             }
         }
+
+        private RelayCommand? saveAsCmd;
+        public RelayCommand SaveAsCmd
+        {
+            get
+            {
+                return saveAsCmd ??
+                  (saveAsCmd = new RelayCommand(obj =>
+                  {
+                      SaveAs();
+                  }));
+            }
+        }
+
+        private RelayCommand? saveCmd;
+        public RelayCommand SaveCmd
+        {
+            get
+            {
+                return saveCmd ??
+                  (saveCmd = new RelayCommand(obj =>
+                  {
+                      SaveProject();
+                  }));
+            }
+        }
         #endregion
 
         private void MouseWheel(MouseWheelEventArgs e)
@@ -259,22 +285,43 @@ namespace PixelDrawer.ViewModel
             openFileDialog.InitialDirectory = System.Environment.CurrentDirectory;
             if (openFileDialog.ShowDialog() == true)
             {
+                if (openFileDialog.FileName.Split(".").Last() == "pdpr")
+                {
+                    var newProject = FileSaveLoad.OpenProject(openFileDialog.FileName);
+                    TestProjects.Current.AddProject(newProject);
+                    Projects.AddProjectLayersView(newProject);
+                    return;
+                }
                 BitmapImage bitmap = new BitmapImage(new Uri(openFileDialog.FileName, UriKind.Absolute));
                 AddProject(
-                    openFileDialog.FileName,
+                    openFileDialog.FileName.Split("\\").Last(),
                     new WriteableBitmap(bitmap));
             }
+        }
+
+        private void SaveAs()
+        {
+            var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
+            var canvas = GetCanvasFromTabControl(tabControl);
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = ".png|*.png|.jpeg|*.jpeg|.bmp|*.bmp|.gif|*.gif";
+            saveFileDialog.DefaultExt = ".png";
+            saveFileDialog.FileName = Projects.SelectedProject.Name;
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                FileSaveLoad.SaveFileAs(saveFileDialog.FileName, Projects.SelectedProject, canvas);
+            }
+        }
+
+        private void SaveProject()
+        {
+            FileSaveLoad.SaveProject(Projects.SelectedProject);
         }
 
         private void ChangeSelectedTool(int? toolId)
         {
             Tools.SelectedTool = Tools.Tools[toolId ?? 0];
         }
-
-        //private void ChangeSelectedLayer(string layerName)
-        //{
-        //    Projects.SelectedLayer = Projects.SelectedProject.Layers.Where(x => x.Name == layerName).First();
-        //}
 
         public void ChangeSelectedLayer(SelectionChangedEventArgs args)
         {
@@ -314,6 +361,16 @@ namespace PixelDrawer.ViewModel
                             VisualTreeHelper.GetChild(
                                 VisualTreeHelper.GetChild(
                                     VisualTreeHelper.GetChild(tabControl, 0), 0), 0), 0), 0), 0), 1), 0), 0), 0), 0), 0), 0), 0) as Image;
+        }
+
+        private Canvas GetCanvasFromTabControl(TabControl tabControl)
+        {
+            return VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(
+                    VisualTreeHelper.GetChild(
+                        VisualTreeHelper.GetChild(
+                            VisualTreeHelper.GetChild(
+                                VisualTreeHelper.GetChild(
+                                    VisualTreeHelper.GetChild(tabControl, 0), 0), 0), 0), 0), 0), 1), 0), 0), 0), 0), 0) as Canvas;
         }
     }
 }

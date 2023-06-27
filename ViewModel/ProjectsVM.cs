@@ -51,7 +51,6 @@ namespace PixelDrawer.ViewModel
             }
         }
 
-        //public ObservableCollection<UIElement> SelectedProjectLayersView = new ObservableCollection<UIElement>();
         private TestProjects Projects = TestProjects.Current;
         public ObservableCollection<TestProject> ProjectsList { get { return Projects.ProjectsList; } }
         public ObservableCollection<LayersView> LayersViews = new ObservableCollection<LayersView>();

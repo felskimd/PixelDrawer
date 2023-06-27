@@ -27,8 +27,8 @@
             <MenuItem Header="File">
                 <MenuItem Header="Create" Command="{Binding ShowCreateWindowCmd}" ></MenuItem>
                 <MenuItem Header="Open" Command="{Binding ShowOpenWindowCmd}"></MenuItem>
-                <MenuItem Header="Save" ></MenuItem>
-                <MenuItem Header="Save As" ></MenuItem>
+                <MenuItem Header="Save" Command="{Binding SaveCmd}"></MenuItem>
+                <MenuItem Header="Save As" Command="{Binding SaveAsCmd}"></MenuItem>
                 <Separator />
                 <MenuItem Header="Exit" ></MenuItem>
             </MenuItem>
@@ -37,7 +37,7 @@
                 <MenuItem Header="Redo" Command="{Binding RedoCmd}"></MenuItem>
                 <MenuItem Header="New Layer" Command="{Binding AddLayerCmd}"></MenuItem>
             </MenuItem>
-            <MenuItem Header="View" ></MenuItem>
+            <MenuItem Header="View" Visibility="Hidden"></MenuItem>
         </Menu>
         <StatusBar Background="DarkGray" Height="25" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2">
             <TextBlock Text="x:"/>

@@ -184,16 +184,13 @@ namespace PixelDrawer.Model
     {
         public string Name { get; }
         public ObservableCollection<TestLayer> Layers { get; private set; }
-        public ObservableCollection<Image> Images { get; private set; }
+        //public ObservableCollection<Image> Images { get; private set; }
 
         private int newLayersCount = 1;
         private int NewLayersCount { get
             {
                 newLayersCount++;
                 return newLayersCount;
-            }
-            set 
-            { 
             }
         }
 
@@ -227,13 +224,13 @@ namespace PixelDrawer.Model
             {
                 new TestLayer("Background", width, height, backgroundColor)
             };
-            var image = new Image();
-            image.Source = Layers.First().Bitmap;
-            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
-            Images = new ObservableCollection<Image>
-            {
-                image
-            };
+            //var image = new Image();
+            //image.Source = Layers.First().Bitmap;
+            //RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
+            //Images = new ObservableCollection<Image>
+            //{
+            //    image
+            //};
             Width = width;
             Height = height;
             SelectedLayer = Layers[0];
@@ -246,16 +243,26 @@ namespace PixelDrawer.Model
             {
                 new TestLayer("Background", bmp)
             };
-            var image = new Image();
-            image.Source = Layers.First().Bitmap;
-            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
-            Images = new ObservableCollection<Image>
-            {
-                image
-            };
+            //var image = new Image();
+            //image.Source = Layers.First().Bitmap;
+            //RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
+            //Images = new ObservableCollection<Image>
+            //{
+            //    image
+            //};
             Width = (int)bmp.Width;
             Height = (int)bmp.Height;
             SelectedLayer = Layers[0];
+        }
+
+        public TestProject(string name, ObservableCollection<TestLayer> layers, int newLayersCount, int width, int height)
+        {
+            Name = name;
+            Layers = layers;
+            this.newLayersCount = newLayersCount;
+            Width = width;
+            Height = height;
+            SelectedLayer = selectedLayer;
         }
 
         public TestLayer AddLayer()
@@ -323,10 +330,12 @@ namespace PixelDrawer.Model
             Bitmap.Clear(color);
         }
 
-        public TestLayer(string name, WriteableBitmap bmp)
+        public TestLayer(string name, WriteableBitmap bmp, bool isVisible = true)
         {
             Name = name;
             Bitmap = bmp;
+            this.IsVisible = isVisible;
+
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -354,16 +363,16 @@ namespace PixelDrawer.Model
             ProjectsList.Add(new TestProject(title, backgroundColor, width, height));
         }
 
+        public void AddProject(TestProject project)
+        {
+            ProjectsList.Add(project);
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
-    }
-
-    public class TestFileManagement
-    {
-
     }
 }

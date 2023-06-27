@@ -48,11 +48,11 @@ namespace PixelDrawer.ViewModel
             Tools = TestTools.GetTools();
             ToolProperties = new Dictionary<TestTool, ToolProperties>
             {
-                { TestTools.GetTools()[0], new PencilProperties() },
-                { TestTools.GetTools()[1], new FillProperties() },
-                { TestTools.GetTools()[2], new PipetteProperties() },
-                { TestTools.GetTools()[3], new SelectionProperties() },
-                { TestTools.GetTools()[4], new EraserProperties() }
+                { Tools[0], new PencilProperties() },
+                { Tools[1], new FillProperties() },
+                { Tools[2], new PipetteProperties() },
+                { Tools[3], new SelectionProperties() },
+                { Tools[4], new EraserProperties() }
             };
         }
 

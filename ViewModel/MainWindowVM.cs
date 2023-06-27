@@ -282,6 +282,7 @@ namespace PixelDrawer.ViewModel
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Image files (*.png;*.jpeg;*.jpg;*.bmp)|*.png;*.jpeg;*.jpg;*.bmp|PixelDrawer files (*.pdpr)|*.pdpr";
+            openFileDialog.DefaultExt = ".pdpr";
             openFileDialog.InitialDirectory = System.Environment.CurrentDirectory;
             if (openFileDialog.ShowDialog() == true)
             {

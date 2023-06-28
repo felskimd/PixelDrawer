@@ -119,7 +119,10 @@
                                         <behaviors:EventTrigger EventName="MouseWheel">
                                             <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MouseWheelCmd }" PassEventArgsToCommand="True" />
                                         </behaviors:EventTrigger>
-                                    </behaviors:Interaction.Triggers>
+                                    <behaviors:EventTrigger EventName="MouseEnter">
+                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MouseEnterCmd}"/>
+                                    </behaviors:EventTrigger>
+                                </behaviors:Interaction.Triggers>
                                     <Border.RenderTransform>
                                         <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
                                     </Border.RenderTransform>

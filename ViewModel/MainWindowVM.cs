@@ -25,6 +25,8 @@ namespace PixelDrawer.ViewModel
         public ProjectsVM Projects { get; }
         public ColorsVM Colors { get; }
         public PointsVM Points { get; }
+        public Image CurrentImage { get; set; }
+
 
         public MainWindowVM()
         {
@@ -203,6 +205,20 @@ namespace PixelDrawer.ViewModel
                   }));
             }
         }
+
+        private RelayCommand? mouseEnterCmd;
+        public RelayCommand MouseEnterCmd
+        {
+            get
+            {
+                return mouseEnterCmd ??
+                  (mouseEnterCmd = new RelayCommand(obj =>
+                  {
+                      var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
+                      CurrentImage = GetImageFromTabControl(tabControl);
+                  }));
+            }
+        }
         #endregion
 
         private void MouseWheel(MouseWheelEventArgs e)
@@ -226,11 +242,11 @@ namespace PixelDrawer.ViewModel
 
         private void DrawMouseMove(MouseEventArgs e)
         {
-            var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
-            var image = GetImageFromTabControl(tabControl);
+            //var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
+            //var image = GetImageFromTabControl(tabControl);
             Points.OldPoint = Points.CurrentPoint;
             Points.CurrentPoint = Application.Current.MainWindow.TranslatePoint(
-                e.GetPosition(Application.Current.MainWindow), image);
+                e.GetPosition(Application.Current.MainWindow), CurrentImage);
             if (e.LeftButton == MouseButtonState.Pressed && Tools.SelectedTool != null)
             {
                 switch (Tools.SelectedTool.ToolId)
@@ -354,7 +370,7 @@ namespace PixelDrawer.ViewModel
             Projects.ProjectsList.Remove(Projects.SelectedProject);
         }
 
-        private Image GetImageFromTabControl(TabControl tabControl)
+        public Image GetImageFromTabControl(TabControl tabControl)
         {
             return VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(
                     VisualTreeHelper.GetChild(

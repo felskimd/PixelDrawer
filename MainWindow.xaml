@@ -81,55 +81,46 @@
                     </DataTemplate>
                 </TabControl.ItemTemplate>
                 <TabControl.ContentTemplate>
-                    <DataTemplate x:Name="imgtemplate">
-                        <Grid>
-                            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
-                                <Border BorderBrush="Black" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" >
-                                    <ItemsControl ItemsSource="{Binding Layers, UpdateSourceTrigger=PropertyChanged}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <Canvas Width="{Binding Width}" Height="{Binding Height}" />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
+                    <DataTemplate x:Name="imgTemplate">
+                    <Grid Cursor="Cross">
+                        <!--MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave" MouseMove="Grid_MouseMove"-->
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
+                            <Border BorderBrush="Black" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" >
+                                <ItemsControl ItemsSource="{Binding Layers, UpdateSourceTrigger=PropertyChanged}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas Width="{Binding Width}" Height="{Binding Height}">
+                                            </Canvas>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
                                             <Image Source="{Binding Bitmap}" RenderOptions.BitmapScalingMode="NearestNeighbor" Visibility="{Binding Visibility, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
-
                                             </Image>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                    <!--<Image x:Name="img" Source="{Binding Layers, UpdateSourceTrigger=PropertyChanged}" Focusable="True" RenderOptions.BitmapScalingMode="NearestNeighbor">
-                                        --><!--<Image.RenderTransform>
-                                            <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
-                                        </Image.RenderTransform>--><!--
-                                        <behaviors:Interaction.Triggers>
-                                            <behaviors:EventTrigger EventName="MouseMove">
-                                                <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.DrawMouseMoveCmd }" PassEventArgsToCommand="True" />
-                                            </behaviors:EventTrigger>
-                                            <behaviors:EventTrigger EventName="MouseWheel">
-                                                <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MouseWheelCmd }" PassEventArgsToCommand="True" />
-                                            </behaviors:EventTrigger>
-                                        </behaviors:Interaction.Triggers>
-                                    </Image>-->
-                                    <behaviors:Interaction.Triggers>
-                                        <behaviors:EventTrigger EventName="MouseMove">
-                                            <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.DrawMouseMoveCmd }" PassEventArgsToCommand="True" />
-                                        </behaviors:EventTrigger>
-                                        <behaviors:EventTrigger EventName="MouseWheel">
-                                            <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MouseWheelCmd }" PassEventArgsToCommand="True" />
-                                        </behaviors:EventTrigger>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <behaviors:Interaction.Triggers>
+                                    <behaviors:EventTrigger EventName="MouseMove">
+                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.DrawMouseMoveCmd }" PassEventArgsToCommand="True" />
+                                    </behaviors:EventTrigger>
+                                    <behaviors:EventTrigger EventName="MouseWheel">
+                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MouseWheelCmd }" PassEventArgsToCommand="True" />
+                                    </behaviors:EventTrigger>
                                     <behaviors:EventTrigger EventName="MouseEnter">
                                         <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MouseEnterCmd}"/>
                                     </behaviors:EventTrigger>
+                                    <!--<behaviors:EventTrigger EventName="MouseLeave">
+                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MouseLeaveCmd}"/>
+                                    </behaviors:EventTrigger>-->
                                 </behaviors:Interaction.Triggers>
-                                    <Border.RenderTransform>
-                                        <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </Border.RenderTransform>
-                                </Border>
-                                    <!--<Rectangle Stroke = "DarkOrange" Visibility = "Collapsed" Fill = "#77EEEEEE"></Rectangle>-->
-                                <!--</Canvas>-->
-                            </ScrollViewer>
+                                <Border.RenderTransform>
+                                    <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Border.RenderTransform>
+                            </Border>
+                            <!--<Rectangle Stroke = "DarkOrange" Visibility = "Collapsed" Fill = "#77EEEEEE"></Rectangle>-->
+                            <!--</Canvas>-->
+                        </ScrollViewer>
                         </Grid>
                     </DataTemplate>
                 </TabControl.ContentTemplate>
@@ -142,8 +133,8 @@
                 <ListBox x:Name="layersView">
                     <ListBox.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Double"></MenuItem>
-                            <MenuItem Header="Delete"></MenuItem>
+                            <MenuItem Header="Double" Command="{Binding DoubleLayerCmd}"></MenuItem>
+                            <MenuItem Header="Delete" Command="{Binding DeleteLayerCmd}"></MenuItem>
                         </ContextMenu>
                     </ListBox.ContextMenu>
                     <behaviors:Interaction.Triggers>
@@ -170,17 +161,6 @@
                         </Style>
                     </ListBox.ItemContainerStyle>
                 </ListBox>
-                <!--<ToolBar.ItemTemplate>
-                        <DataTemplate>
-                            <RadioButton Style="{StaticResource {x:Type ToggleButton}}" GroupName="Layers" Content="{Binding Name}">
-                                <behaviors:Interaction.Triggers>
-                                    <behaviors:EventTrigger EventName="Checked">
-                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.ChangeSelectedLayerCmd }" CommandParameter="{Binding Name}" />
-                                    </behaviors:EventTrigger>
-                                </behaviors:Interaction.Triggers>
-                            </RadioButton>
-                        </DataTemplate>
-                    </ToolBar.ItemTemplate>-->
             </ToolBar>
         </ToolBarTray>
     </Grid>

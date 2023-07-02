@@ -25,23 +25,27 @@ namespace PixelDrawer.ViewModel
 {
     public class ProjectsVM: INotifyPropertyChanged
     {
-        private TestProject? selectedProject;
-        public TestProject SelectedProject 
+        private Project? selectedProject;
+        public Project SelectedProject 
         { 
             get => selectedProject; 
             set
             {
                 selectedProject = value;
                 var layersListBox = Application.Current.MainWindow.FindName("layersView") as ListBox;
-                layersListBox.ItemsSource = GetLayersView(selectedProject);
+                //layersListBox.ItemsSource = GetLayersView(selectedProject);
                 //layersListBox.Items.Clear();
+                var binding = new Binding();
+                binding.Source = GetLayersView(selectedProject);
+                binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                layersListBox.SetBinding(ListBox.ItemsSourceProperty, binding);
                 if (value != null) SelectedLayer = selectedProject.SelectedLayer;
                 OnPropertyChanged("SelectedProject");
             }
         }
 
-        private TestLayer? selectedLayer;
-        public TestLayer SelectedLayer
+        private Layer? selectedLayer;
+        public Layer SelectedLayer
         {
             get => selectedLayer;
             set
@@ -51,21 +55,26 @@ namespace PixelDrawer.ViewModel
             }
         }
 
-        private TestProjects Projects = TestProjects.Current;
-        public ObservableCollection<TestProject> ProjectsList { get { return Projects.ProjectsList; } }
-        public ObservableCollection<LayersView> LayersViews = new ObservableCollection<LayersView>();
+        public LayersView SelectedProjectLayersView
+        {
+            get => LayersViews.Where(x => x.RelatedProject == SelectedProject).First();
+        }
 
-        public void AddProjectLayersView(TestProject project)
+        private Projects Projects = Projects.Current;
+        public ObservableCollection<Project> ProjectsList { get { return Projects.ProjectsList; } }
+        private ObservableCollection<LayersView> LayersViews = new ObservableCollection<LayersView>();
+
+        public void AddProjectLayersView(Project project)
         {
             LayersViews.Add(new LayersView(project));
         }
 
-        public void RemoveProjectLayersView(TestProject project)
+        public void RemoveProjectLayersView(Project project)
         {
             LayersViews.Remove(LayersViews.Where(x => x.RelatedProject == project).First());
         }
 
-        public ObservableCollection<UIElement> GetLayersView(TestProject project)
+        public ObservableCollection<UIElement> GetLayersView(Project project)
         {
             return LayersViews.Where(x => x.RelatedProject == project).First().GetViews();
         }
@@ -80,10 +89,10 @@ namespace PixelDrawer.ViewModel
         public class LayersView
         {
             private ObservableCollection<UIElement> Views = new ObservableCollection<UIElement>();
-            public ObservableCollection<TestLayer> RelatedLayers;
-            public TestProject RelatedProject { get; }
+            public ObservableCollection<Layer> RelatedLayers;
+            public Project RelatedProject { get; }
 
-            public LayersView(TestProject project)
+            public LayersView(Project project)
             {
                 RelatedProject = project;
                 RelatedLayers = project.Layers;
@@ -93,7 +102,7 @@ namespace PixelDrawer.ViewModel
                 }
             }
 
-            public void AddNewLayer(TestLayer newLayer)
+            public StackPanel PrepareNewLayer(Layer newLayer)
             {
                 var stackPanel = new StackPanel();
                 stackPanel.Tag = newLayer;
@@ -130,13 +139,29 @@ namespace PixelDrawer.ViewModel
                 stackPanel.Children.Add(layerNameBox);
                 stackPanel.Children.Add(moveUpButton);
                 stackPanel.Children.Add(moveDownButton);
-                Views.Add(stackPanel);
+                return stackPanel;
+            }
+
+            public void AddNewLayer(Layer newLayer)
+            {
+                Views.Add(PrepareNewLayer(newLayer));
+            }
+
+            public void DoubleLayer(Layer newLayer, Layer oldLayer)
+            {
+                Views.Insert(Views.IndexOf(Views.Where(x => (x as StackPanel).Tag == oldLayer).First()), 
+                    PrepareNewLayer(newLayer));
+            }
+
+            public void RemoveLayer(Layer layer)
+            {
+                Views.Remove(Views.Where(x => (x as StackPanel).Tag == layer).First());
             }
 
             private void MoveLayerUp(Button btn)
             {
                 var stackPanel = btn.Parent as StackPanel;
-                var layer = stackPanel.Tag as TestLayer;
+                var layer = stackPanel.Tag as Layer;
                 var index = RelatedLayers.IndexOf(layer);
                 if (index < RelatedLayers.Count - 1)
                 {
@@ -150,7 +175,7 @@ namespace PixelDrawer.ViewModel
             private void MoveLayerDown(Button btn)
             {
                 var stackPanel = btn.Parent as StackPanel;
-                var layer = stackPanel.Tag as TestLayer;
+                var layer = stackPanel.Tag as Layer;
                 var index = RelatedLayers.IndexOf(layer);
                 if (index > 0)
                 {

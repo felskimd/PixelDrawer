@@ -16,6 +16,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Shapes;
 
 namespace PixelDrawer.ViewModel
 {
@@ -26,7 +27,7 @@ namespace PixelDrawer.ViewModel
         public ColorsVM Colors { get; }
         public PointsVM Points { get; }
         public Image CurrentImage { get; set; }
-
+        public Canvas CurrentCanvas { get; set; }
 
         public MainWindowVM()
         {
@@ -219,31 +220,60 @@ namespace PixelDrawer.ViewModel
                   }));
             }
         }
+
+        private RelayCommand? doubleLayerCmd;
+        public RelayCommand DoubleLayerCmd
+        {
+            get
+            {
+                return doubleLayerCmd ??
+                  (doubleLayerCmd = new RelayCommand(obj =>
+                  {
+                      var newLayer = Projects.SelectedProject.DoubleLayer(Projects.SelectedProject.SelectedLayer);
+                      Projects.SelectedProjectLayersView.DoubleLayer(newLayer, Projects.SelectedProject.SelectedLayer);
+                  }));
+            }
+        }
+
+        private RelayCommand? deleteLayerCmd;
+        public RelayCommand DeleteLayerCmd
+        {
+            get
+            {
+                return deleteLayerCmd ??
+                  (deleteLayerCmd = new RelayCommand(obj =>
+                  {
+                      Projects.SelectedProject.DeleteLayer(Projects.SelectedProject.SelectedLayer);
+                      Projects.SelectedProjectLayersView.RemoveLayer(Projects.SelectedProject.SelectedLayer);
+                  }));
+            }
+        }
         #endregion
 
         private void MouseWheel(MouseWheelEventArgs e)
         {
-            //var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
-            //var tabItem = tabControl.SelectedItem as TabItem;
-
             if (Projects.SelectedProject.Scale < 0.3 && e.Delta < 0)
             {
                 return;
             }
             Points.ZoomCenterPoint = new Point(Points.CurrentPoint.X, Points.CurrentPoint.Y);
             if (Projects.SelectedProject.Scale < 7)
+            {
                 Projects.SelectedProject.Scale += (double)e.Delta / 500;
+            }
             else if (Projects.SelectedProject.Scale < 14)
+            {
                 Projects.SelectedProject.Scale += (double)e.Delta / 250;
+            }
             else
+            {
                 Projects.SelectedProject.Scale += (double)e.Delta / 125;
+            }
             Projects.SelectedProject.Scale = Math.Round(Projects.SelectedProject.Scale, 2);
         }
 
         private void DrawMouseMove(MouseEventArgs e)
         {
-            //var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
-            //var image = GetImageFromTabControl(tabControl);
             Points.OldPoint = Points.CurrentPoint;
             Points.CurrentPoint = Application.Current.MainWindow.TranslatePoint(
                 e.GetPosition(Application.Current.MainWindow), CurrentImage);
@@ -254,24 +284,24 @@ namespace PixelDrawer.ViewModel
                     case 0:
                         if (Projects.SelectedLayer != null)
                         {
-                            var tool0 = Tools.SelectedTool as TestPencilTool;
+                            var tool0 = Tools.SelectedTool as PencilTool;
                             tool0.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint, Colors.SelectedColor);
                         }
                         break;
                     case 1:
-                        var tool1 = Tools.SelectedTool as TestFillTool;
+                        var tool1 = Tools.SelectedTool as FillTool;
                         tool1.Execute(Projects.SelectedLayer.Bitmap, Colors.SelectedColor);
                         break; 
                     case 2:
-                        var tool2 = Tools.SelectedTool as TestPipetteTool;
+                        var tool2 = Tools.SelectedTool as PipetteTool;
                         Colors.SelectedColor = tool2.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
                         break;
                     case 3:
-                        var tool3 = Tools.SelectedTool as TestSelectionTool;
+                        var tool3 = Tools.SelectedTool as SelectionTool;
                         //todo
                         break;
                     case 4:
-                        var tool4 = Tools.SelectedTool as TestEraserTool;
+                        var tool4 = Tools.SelectedTool as EraserTool;
                         tool4.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
                         break;
                 }
@@ -280,7 +310,7 @@ namespace PixelDrawer.ViewModel
 
         public void AddProject(string name, WriteableBitmap bmp)
         {
-            var newProject = new TestProject(name, bmp);
+            var newProject = new Project(name, bmp);
             Projects.ProjectsList.Add(newProject);
             Projects.AddProjectLayersView(newProject);
             Projects.SelectedProject = newProject;
@@ -305,7 +335,7 @@ namespace PixelDrawer.ViewModel
                 if (openFileDialog.FileName.Split(".").Last() == "pdpr")
                 {
                     var newProject = FileSaveLoad.OpenProject(openFileDialog.FileName);
-                    TestProjects.Current.AddProject(newProject);
+                    Model.Projects.Current.AddProject(newProject);
                     Projects.AddProjectLayersView(newProject);
                     return;
                 }
@@ -345,8 +375,8 @@ namespace PixelDrawer.ViewModel
             StackPanel stackPanel = (Application.Current.MainWindow.FindName("layersView") as ListBox).SelectedItem as StackPanel;
             if (stackPanel != null)
             {
-                Projects.SelectedProject.SelectedLayer = stackPanel.Tag as TestLayer;
-                Projects.SelectedLayer = stackPanel.Tag as TestLayer;
+                Projects.SelectedProject.SelectedLayer = stackPanel.Tag as Layer;
+                Projects.SelectedLayer = stackPanel.Tag as Layer;
             }
         }
 
@@ -361,7 +391,9 @@ namespace PixelDrawer.ViewModel
         private void AddLayer()
         {
             var newLayer = Projects.SelectedProject.AddLayer();
-            Projects.LayersViews.Where(x => x.RelatedProject == Projects.SelectedProject).First().AddNewLayer(newLayer);
+            //Projects.LayersViews.Where(x => x.RelatedProject == Projects.SelectedProject).First().AddNewLayer(newLayer);
+            Projects.SelectedProjectLayersView.AddNewLayer(newLayer);
+
         }
 
         private void TabControlClose()
@@ -370,7 +402,7 @@ namespace PixelDrawer.ViewModel
             Projects.ProjectsList.Remove(Projects.SelectedProject);
         }
 
-        public Image GetImageFromTabControl(TabControl tabControl)
+        private Image GetImageFromTabControl(TabControl tabControl)
         {
             return VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(
                     VisualTreeHelper.GetChild(
@@ -388,6 +420,14 @@ namespace PixelDrawer.ViewModel
                             VisualTreeHelper.GetChild(
                                 VisualTreeHelper.GetChild(
                                     VisualTreeHelper.GetChild(tabControl, 0), 0), 0), 0), 0), 0), 1), 0), 0), 0), 0), 0) as Canvas;
+        }
+
+        private Grid GetGridFromTabControl(TabControl tabControl)
+        {
+            return VisualTreeHelper.GetChild(
+                            VisualTreeHelper.GetChild(
+                                VisualTreeHelper.GetChild(
+                                    VisualTreeHelper.GetChild(tabControl, 0), 0), 0), 0) as Grid;
         }
     }
 }

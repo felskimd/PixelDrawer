@@ -11,21 +11,23 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Xceed.Wpf.Toolkit;
+using System.Windows.Shapes;
 
 namespace PixelDrawer.ViewModel
 {
     public class ToolsVM : INotifyPropertyChanged
     {
-        public Dictionary<TestTool, ToolProperties> ToolProperties { get; }
+        public Dictionary<Tool, ToolProperties> ToolProperties { get; }
 
-        private TestTool? selectedTool;
-        public TestTool SelectedTool
+        private Tool? selectedTool;
+        public Tool SelectedTool
         {
             get => selectedTool;
             set
             {
                 selectedTool = value;
                 SelectedToolProperties = ToolProperties[selectedTool];
+                var mainWindowVM = Application.Current.MainWindow.DataContext as MainWindowVM;
                 OnPropertyChanged("SelectedTool");
             }
         }
@@ -41,12 +43,12 @@ namespace PixelDrawer.ViewModel
             }
         }
 
-        public ObservableCollection<TestTool> Tools { get; }
+        public ObservableCollection<Tool> Tools { get; }
 
         public ToolsVM()
         {
-            Tools = TestTools.GetTools();
-            ToolProperties = new Dictionary<TestTool, ToolProperties>
+            Tools = Model.Tools.GetTools();
+            ToolProperties = new Dictionary<Tool, ToolProperties>
             {
                 { Tools[0], new PencilProperties() },
                 { Tools[1], new FillProperties() },
@@ -67,14 +69,14 @@ namespace PixelDrawer.ViewModel
     public interface ToolProperties
     {
         public abstract ObservableCollection<UIElement> PropertiesView { get; }
-        public abstract TestTool linkedTool { get; }
+        public abstract Tool linkedTool { get; }
     }
 
     internal class PencilProperties : ToolProperties
     {
         public ObservableCollection<UIElement> PropertiesView { get; }
 
-        public TestTool linkedTool => TestTools.GetTools()[0];
+        public Tool linkedTool => Tools.GetTools()[0];
 
         public PencilProperties()
         {
@@ -106,28 +108,28 @@ namespace PixelDrawer.ViewModel
     {
         public ObservableCollection<UIElement> PropertiesView => new ObservableCollection<UIElement>();
 
-        public TestTool linkedTool => TestTools.GetTools()[1];
+        public Tool linkedTool => Tools.GetTools()[1];
     }
 
     internal class PipetteProperties : ToolProperties
     {
         public ObservableCollection<UIElement> PropertiesView => new ObservableCollection<UIElement>();
 
-        public TestTool linkedTool => TestTools.GetTools()[2];
+        public Tool linkedTool => Tools.GetTools()[2];
     }
 
     internal class SelectionProperties : ToolProperties
     {
         public ObservableCollection<UIElement> PropertiesView => new ObservableCollection<UIElement>();
 
-        public TestTool linkedTool => TestTools.GetTools()[3];
+        public Tool linkedTool => Tools.GetTools()[3];
     }
 
     internal class EraserProperties : ToolProperties
     {
         public ObservableCollection<UIElement> PropertiesView { get; }
 
-        public TestTool linkedTool => TestTools.GetTools()[4];
+        public Tool linkedTool => Tools.GetTools()[4];
 
         public EraserProperties()
         {

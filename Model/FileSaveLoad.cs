@@ -17,7 +17,7 @@ namespace PixelDrawer
 {
     static class FileSaveLoad
     {
-        public static void SaveFileAs(string fileName, TestProject project, Canvas canvas)
+        public static void SaveFileAs(string fileName, Project project, Canvas canvas)
         {
             switch (fileName.Split('.').Last())
             {
@@ -74,7 +74,7 @@ namespace PixelDrawer
             return renderTarget;
         }
 
-        public static void SaveProject(TestProject project) 
+        public static void SaveProject(Project project) 
         {
             using (var stream = File.Open(System.Environment.CurrentDirectory + "\\" + project.Name + ".pdpr", FileMode.Create))
             {
@@ -95,12 +95,12 @@ namespace PixelDrawer
                 
         }
 
-        public static TestProject OpenProject(string path)
+        public static Project OpenProject(string path)
         {
             string projectName;
             int width;
             int height;
-            var layers = new ObservableCollection<TestLayer>();
+            var layers = new ObservableCollection<Layer>();
             int layersCount;
             using (var stream = File.Open(path, FileMode.Open))
             {
@@ -117,11 +117,11 @@ namespace PixelDrawer
                         var bmp = BitmapFactory.New(width, height);
                         var byteArray = reader.ReadBytes(width * height * 4);
                         bmp.FromByteArray(byteArray);
-                        layers.Add(new TestLayer(layerName, bmp, isVisible));
+                        layers.Add(new Layer(layerName, bmp, isVisible));
                     }
                 }
             }
-            var newProject = new TestProject(projectName, layers, layersCount, width, height);
+            var newProject = new Project(projectName, layers, layersCount, width, height);
             return newProject;
         }
     }

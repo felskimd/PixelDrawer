@@ -116,6 +116,19 @@ namespace PixelDrawer.ViewModel
             }
         }
 
+        private RelayCommand? drawMouseClickCmd;
+        public RelayCommand DrawMouseClickCmd
+        {
+            get
+            {
+                return drawMouseClickCmd ??
+                  (drawMouseClickCmd = new RelayCommand(obj =>
+                  {
+                      DrawMouseClick(obj as MouseEventArgs);
+                  }));
+            }
+        }
+
         private RelayCommand? mouseWheelCmd;
         public RelayCommand MouseWheelCmd
         {
@@ -305,6 +318,36 @@ namespace PixelDrawer.ViewModel
                         tool4.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
                         break;
                 }
+            }
+        }
+
+        private void DrawMouseClick(MouseEventArgs e)
+        {
+            switch (Tools.SelectedTool.ToolId)
+            {
+                case 0:
+                    if (Projects.SelectedLayer != null)
+                    {
+                        var tool0 = Tools.SelectedTool as PencilTool;
+                        tool0.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint, Colors.SelectedColor);
+                    }
+                    break;
+                case 1:
+                    var tool1 = Tools.SelectedTool as FillTool;
+                    tool1.Execute(Projects.SelectedLayer.Bitmap, Colors.SelectedColor);
+                    break;
+                case 2:
+                    var tool2 = Tools.SelectedTool as PipetteTool;
+                    Colors.SelectedColor = tool2.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
+                    break;
+                case 3:
+                    var tool3 = Tools.SelectedTool as SelectionTool;
+                    //todo
+                    break;
+                case 4:
+                    var tool4 = Tools.SelectedTool as EraserTool;
+                    tool4.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
+                    break;
             }
         }
 

@@ -104,6 +104,9 @@
                                     <behaviors:EventTrigger EventName="MouseMove">
                                         <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.DrawMouseMoveCmd }" PassEventArgsToCommand="True" />
                                     </behaviors:EventTrigger>
+                                    <behaviors:EventTrigger EventName="MouseLeftButtonDown">
+                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.DrawMouseClickCmd }" PassEventArgsToCommand="True" />
+                                    </behaviors:EventTrigger>
                                     <behaviors:EventTrigger EventName="MouseWheel">
                                         <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MouseWheelCmd }" PassEventArgsToCommand="True" />
                                     </behaviors:EventTrigger>

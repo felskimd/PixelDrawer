@@ -275,13 +275,14 @@ namespace PixelDrawer.ViewModel
                 return spaceKeyDownCmd ??
                     (spaceKeyDownCmd = new RelayCommand(obj =>
                     {
-                        var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
-                        var border = GetBorderFromTabControl(tabControl);
-                        border.ForceCursor = true;
-                        border.Cursor = Cursors.Hand;
-                        //if (!Interaction.GetBehaviors(border).Contains(mouseDragElementBehavior))
-                        //    Interaction.GetBehaviors(border).Add(mouseDragElementBehavior);
-                        mouseDragElementBehavior.Attach(border);
+                        if (Projects.SelectedProject != null)
+                        {
+                            var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
+                            var border = GetBorderFromTabControl(tabControl);
+                            border.ForceCursor = true;
+                            border.Cursor = Cursors.Hand;
+                            mouseDragElementBehavior.Attach(border);
+                        }
                     }));
             }
         }
@@ -294,12 +295,13 @@ namespace PixelDrawer.ViewModel
                 return spaceKeyUpCmd ??
                     (spaceKeyUpCmd = new RelayCommand(obj =>
                     {
-                        var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
-                        var border = GetBorderFromTabControl(tabControl);
-                        border.ForceCursor = false;
-                        border.Cursor = Cursors.Cross;
-                        //mouseDragElementBehavior.Detach();
-                        //Interaction.GetBehaviors(border).Remove(mouseDragElementBehavior);
+                        if (Projects.SelectedProject != null)
+                        {
+                            var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
+                            var border = GetBorderFromTabControl(tabControl);
+                            border.ForceCursor = false;
+                            border.Cursor = Cursors.Cross;
+                        }
                     }));
             }
         }

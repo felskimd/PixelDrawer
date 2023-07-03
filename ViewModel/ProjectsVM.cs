@@ -108,6 +108,9 @@ namespace PixelDrawer.ViewModel
                 stackPanel.Tag = newLayer;
                 stackPanel.Orientation = Orientation.Horizontal;
                 var visibilityToggleButton = new ToggleButton();
+                var visibilityImage = new Image();
+                visibilityImage.Source = new BitmapImage(new Uri("/Icons/VisibilityIcon.bmp", UriKind.Relative));
+                visibilityToggleButton.Content = visibilityImage;
                 var visibilityBinding = new Binding();
                 visibilityBinding.Source = newLayer;
                 visibilityBinding.Mode = BindingMode.TwoWay;

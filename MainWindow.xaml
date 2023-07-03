@@ -21,7 +21,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="86"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition Width="120"></ColumnDefinition>
+            <ColumnDefinition Width="200"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Menu DockPanel.Dock="Top" Height="25" VerticalAlignment="Top" Grid.Column="0" Grid.ColumnSpan="3">
             <MenuItem Header="File">
@@ -82,7 +82,7 @@
                 </TabControl.ItemTemplate>
                 <TabControl.ContentTemplate>
                     <DataTemplate x:Name="imgTemplate">
-                    <Grid Cursor="Cross">
+                        <Grid Cursor="Cross" x:Name="grid">
                         <!--MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave" MouseMove="Grid_MouseMove"-->
                         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
                             <Border BorderBrush="Black" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" >
@@ -100,39 +100,57 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
+                                <!--<behaviors:Interaction.Behaviors>
+                                    <behaviors:MouseDragElementBehavior/>
+                                </behaviors:Interaction.Behaviors>-->
                                 <behaviors:Interaction.Triggers>
+                                    <behaviors:KeyTrigger FiredOn="KeyDown" Key="Space">
+                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, 
+                                            Path=DataContext.SpaceKeyDownCmd }" PassEventArgsToCommand="True"/>
+                                    </behaviors:KeyTrigger>
+                                    <behaviors:KeyTrigger FiredOn="KeyUp" Key="Space">
+                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, 
+                                            Path=DataContext.SpaceKeyUpCmd }" PassEventArgsToCommand="True"/>
+                                    </behaviors:KeyTrigger>
                                     <behaviors:EventTrigger EventName="MouseMove">
-                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.DrawMouseMoveCmd }" PassEventArgsToCommand="True" />
+                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, 
+                                            Path=DataContext.DrawMouseMoveCmd }" PassEventArgsToCommand="True" />
                                     </behaviors:EventTrigger>
                                     <behaviors:EventTrigger EventName="MouseLeftButtonDown">
-                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.DrawMouseClickCmd }" PassEventArgsToCommand="True" />
+                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, 
+                                            Path=DataContext.DrawMouseClickCmd }" PassEventArgsToCommand="True" />
                                     </behaviors:EventTrigger>
                                     <behaviors:EventTrigger EventName="MouseWheel">
-                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MouseWheelCmd }" PassEventArgsToCommand="True" />
+                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, 
+                                            Path=DataContext.MouseWheelCmd }" PassEventArgsToCommand="True" />
                                     </behaviors:EventTrigger>
                                     <behaviors:EventTrigger EventName="MouseEnter">
-                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MouseEnterCmd}"/>
+                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, 
+                                            Path=DataContext.MouseEnterCmd}"/>
                                     </behaviors:EventTrigger>
                                     <!--<behaviors:EventTrigger EventName="MouseLeave">
                                         <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MouseLeaveCmd}"/>
                                     </behaviors:EventTrigger>-->
                                 </behaviors:Interaction.Triggers>
-                                <Border.RenderTransform>
+                                <!--<Border.RenderTransform>
                                     <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
-                                </Border.RenderTransform>
+                                </Border.RenderTransform>-->
                             </Border>
                             <!--<Rectangle Stroke = "DarkOrange" Visibility = "Collapsed" Fill = "#77EEEEEE"></Rectangle>-->
                             <!--</Canvas>-->
                         </ScrollViewer>
-                        </Grid>
+                        <Grid.LayoutTransform>
+                            <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid.LayoutTransform>
+                    </Grid>
                     </DataTemplate>
                 </TabControl.ContentTemplate>
             </TabControl>
-        <ToolBarTray Grid.Column="2" Grid.Row="1" Background="DimGray" Orientation="Vertical" Width="120">
-            <ToolBar x:Name="toolPropertiesBar" VerticalAlignment="Top" Header="Tool Properties" Width="120">
+        <ToolBarTray Grid.Column="2" Grid.Row="1" Background="DimGray" Orientation="Vertical" Width="200">
+            <ToolBar x:Name="toolPropertiesBar" VerticalAlignment="Top" Header="Tool Properties" Width="200">
                 <ItemsControl ItemsSource="{Binding Tools.SelectedToolProperties.PropertiesView, Mode=OneWay}"/>
             </ToolBar>
-            <ToolBar x:Name="layersControlBar" VerticalAlignment="Top" Header="Layers" Width="120">
+            <ToolBar x:Name="layersControlBar" VerticalAlignment="Top" Header="Layers" Width="200">
                 <ListBox x:Name="layersView">
                     <ListBox.ContextMenu>
                         <ContextMenu>

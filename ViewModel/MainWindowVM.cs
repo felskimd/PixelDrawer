@@ -17,6 +17,8 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Shapes;
+using Microsoft.Xaml.Behaviors.Layout;
+using Xceed.Wpf.Toolkit.Core.Utilities;
 
 namespace PixelDrawer.ViewModel
 {
@@ -28,6 +30,7 @@ namespace PixelDrawer.ViewModel
         public PointsVM Points { get; }
         public Image CurrentImage { get; set; }
         public Canvas CurrentCanvas { get; set; }
+        private MouseDragElementBehavior mouseDragElementBehavior = new MouseDragElementBehavior();
 
         public MainWindowVM()
         {
@@ -261,6 +264,41 @@ namespace PixelDrawer.ViewModel
                   }));
             }
         }
+
+        private RelayCommand? spaceKeyDownCmd;
+        public RelayCommand SpaceKeyDownCmd
+        {
+            get
+            {
+                return spaceKeyDownCmd ??
+                    (spaceKeyDownCmd = new RelayCommand(obj =>
+                    {
+                        var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
+                        var border = GetBorderFromTabControl(tabControl);
+                        border.ForceCursor = true;
+                        border.Cursor = Cursors.Hand;
+                        if (!Interaction.GetBehaviors(border).Contains(mouseDragElementBehavior))
+                            Interaction.GetBehaviors(border).Add(mouseDragElementBehavior);
+                    }));
+            }
+        }
+
+        private RelayCommand? spaceKeyUpCmd;
+        public RelayCommand SpaceKeyUpCmd
+        {
+            get
+            {
+                return spaceKeyUpCmd ??
+                    (spaceKeyUpCmd = new RelayCommand(obj =>
+                    {
+                        var tabControl = Application.Current.MainWindow.FindName("projects") as TabControl;
+                        var border = GetBorderFromTabControl(tabControl);
+                        border.ForceCursor = false;
+                        border.Cursor = Cursors.Cross;
+                        Interaction.GetBehaviors(border).Remove(mouseDragElementBehavior);
+                    }));
+            }
+        }
         #endregion
 
         private void MouseWheel(MouseWheelEventArgs e)
@@ -269,7 +307,8 @@ namespace PixelDrawer.ViewModel
             {
                 return;
             }
-            Points.ZoomCenterPoint = new Point(Points.CurrentPoint.X, Points.CurrentPoint.Y);
+            //Points.ZoomCenterPoint = new Point(Points.CurrentPoint.X, Points.CurrentPoint.Y);
+            Points.ZoomCenterPoint = e.GetPosition(VisualTreeHelperEx.FindDescendantByName(Application.Current.MainWindow, "grid") as Grid);
             if (Projects.SelectedProject.Scale < 7)
             {
                 Projects.SelectedProject.Scale += (double)e.Delta / 500;
@@ -290,7 +329,7 @@ namespace PixelDrawer.ViewModel
             Points.OldPoint = Points.CurrentPoint;
             Points.CurrentPoint = Application.Current.MainWindow.TranslatePoint(
                 e.GetPosition(Application.Current.MainWindow), CurrentImage);
-            if (e.LeftButton == MouseButtonState.Pressed && Tools.SelectedTool != null)
+            if (e.LeftButton == MouseButtonState.Pressed && Tools.SelectedTool != null && !Keyboard.IsKeyDown(Key.Space))
             {
                 switch (Tools.SelectedTool.ToolId)
                 {
@@ -323,31 +362,34 @@ namespace PixelDrawer.ViewModel
 
         private void DrawMouseClick(MouseEventArgs e)
         {
-            switch (Tools.SelectedTool.ToolId)
+            if (Tools.SelectedTool != null && !Keyboard.IsKeyDown(Key.Space))
             {
-                case 0:
-                    if (Projects.SelectedLayer != null)
-                    {
-                        var tool0 = Tools.SelectedTool as PencilTool;
-                        tool0.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint, Colors.SelectedColor);
-                    }
-                    break;
-                case 1:
-                    var tool1 = Tools.SelectedTool as FillTool;
-                    tool1.Execute(Projects.SelectedLayer.Bitmap, Colors.SelectedColor);
-                    break;
-                case 2:
-                    var tool2 = Tools.SelectedTool as PipetteTool;
-                    Colors.SelectedColor = tool2.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
-                    break;
-                case 3:
-                    var tool3 = Tools.SelectedTool as SelectionTool;
-                    //todo
-                    break;
-                case 4:
-                    var tool4 = Tools.SelectedTool as EraserTool;
-                    tool4.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
-                    break;
+                switch (Tools.SelectedTool.ToolId)
+                {
+                    case 0:
+                        if (Projects.SelectedLayer != null)
+                        {
+                            var tool0 = Tools.SelectedTool as PencilTool;
+                            tool0.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint, Colors.SelectedColor);
+                        }
+                        break;
+                    case 1:
+                        var tool1 = Tools.SelectedTool as FillTool;
+                        tool1.Execute(Projects.SelectedLayer.Bitmap, Colors.SelectedColor);
+                        break;
+                    case 2:
+                        var tool2 = Tools.SelectedTool as PipetteTool;
+                        Colors.SelectedColor = tool2.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
+                        break;
+                    case 3:
+                        var tool3 = Tools.SelectedTool as SelectionTool;
+                        //todo
+                        break;
+                    case 4:
+                        var tool4 = Tools.SelectedTool as EraserTool;
+                        tool4.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
+                        break;
+                }
             }
         }
 
@@ -465,12 +507,15 @@ namespace PixelDrawer.ViewModel
                                     VisualTreeHelper.GetChild(tabControl, 0), 0), 0), 0), 0), 0), 1), 0), 0), 0), 0), 0) as Canvas;
         }
 
-        private Grid GetGridFromTabControl(TabControl tabControl)
+        private Border GetBorderFromTabControl(TabControl tabControl)
         {
             return VisualTreeHelper.GetChild(
-                            VisualTreeHelper.GetChild(
+                        VisualTreeHelper.GetChild(
+                            VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(
                                 VisualTreeHelper.GetChild(
-                                    VisualTreeHelper.GetChild(tabControl, 0), 0), 0), 0) as Grid;
+                                    VisualTreeHelper.GetChild(
+                                        VisualTreeHelper.GetChild(
+                                            VisualTreeHelper.GetChild(tabControl, 0), 0), 0), 0), 0), 0), 1), 0) as Border;
         }
     }
 }

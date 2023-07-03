@@ -12,6 +12,7 @@
     <None Remove="CloseImg.bmp" />
     <None Remove="Icons\DownArrow.bmp" />
     <None Remove="Icons\UpArrow.bmp" />
+    <None Remove="Icons\VisibilityIcon.bmp" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +26,7 @@
     <Resource Include="Icons\CloseImg.bmp" />
     <Resource Include="Icons\DownArrow.bmp" />
     <Resource Include="Icons\UpArrow.bmp" />
+    <Resource Include="Icons\VisibilityIcon.bmp" />
   </ItemGroup>
 
 </Project>

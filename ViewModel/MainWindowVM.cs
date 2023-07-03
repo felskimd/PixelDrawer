@@ -30,7 +30,7 @@ namespace PixelDrawer.ViewModel
         public PointsVM Points { get; }
         public Image CurrentImage { get; set; }
         public Canvas CurrentCanvas { get; set; }
-        private MouseDragElementBehavior mouseDragElementBehavior = new MouseDragElementBehavior();
+        private MouseDragElementBehavior mouseDragElementBehavior;
 
         public MainWindowVM()
         {
@@ -38,6 +38,8 @@ namespace PixelDrawer.ViewModel
             Projects = new ProjectsVM();
             Colors = new ColorsVM();
             Points = new PointsVM();
+            mouseDragElementBehavior = new MouseDragElementBehavior();
+            mouseDragElementBehavior.DragFinished += ((x,y) => mouseDragElementBehavior.Detach());
         }
 
         #region Commands
@@ -277,8 +279,9 @@ namespace PixelDrawer.ViewModel
                         var border = GetBorderFromTabControl(tabControl);
                         border.ForceCursor = true;
                         border.Cursor = Cursors.Hand;
-                        if (!Interaction.GetBehaviors(border).Contains(mouseDragElementBehavior))
-                            Interaction.GetBehaviors(border).Add(mouseDragElementBehavior);
+                        //if (!Interaction.GetBehaviors(border).Contains(mouseDragElementBehavior))
+                        //    Interaction.GetBehaviors(border).Add(mouseDragElementBehavior);
+                        mouseDragElementBehavior.Attach(border);
                     }));
             }
         }
@@ -295,7 +298,8 @@ namespace PixelDrawer.ViewModel
                         var border = GetBorderFromTabControl(tabControl);
                         border.ForceCursor = false;
                         border.Cursor = Cursors.Cross;
-                        Interaction.GetBehaviors(border).Remove(mouseDragElementBehavior);
+                        //mouseDragElementBehavior.Detach();
+                        //Interaction.GetBehaviors(border).Remove(mouseDragElementBehavior);
                     }));
             }
         }

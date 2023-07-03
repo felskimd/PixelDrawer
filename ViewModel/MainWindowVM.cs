@@ -313,7 +313,6 @@ namespace PixelDrawer.ViewModel
             {
                 return;
             }
-            //Points.ZoomCenterPoint = new Point(Points.CurrentPoint.X, Points.CurrentPoint.Y);
             Points.ZoomCenterPoint = e.GetPosition(VisualTreeHelperEx.FindDescendantByName(Application.Current.MainWindow, "grid") as Grid);
             if (Projects.SelectedProject.Scale < 7)
             {

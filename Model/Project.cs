@@ -15,7 +15,6 @@ namespace PixelDrawer.Model
     {
         public string Name { get; }
         public ObservableCollection<Layer> Layers { get; private set; }
-        //public ObservableCollection<Image> Images { get; private set; }
 
         private int newLayersCount = 1;
         private int NewLayersCount

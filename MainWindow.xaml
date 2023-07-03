@@ -82,8 +82,7 @@
                 </TabControl.ItemTemplate>
                 <TabControl.ContentTemplate>
                     <DataTemplate x:Name="imgTemplate">
-                        <Grid Cursor="Cross" x:Name="grid">
-                        <!--MouseEnter="Grid_MouseEnter" MouseLeave="Grid_MouseLeave" MouseMove="Grid_MouseMove"-->
+                    <Grid Cursor="Cross" x:Name="grid">
                         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
                             <Border BorderBrush="Black" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" >
                                 <ItemsControl ItemsSource="{Binding Layers, UpdateSourceTrigger=PropertyChanged}">
@@ -100,9 +99,6 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
-                                <!--<behaviors:Interaction.Behaviors>
-                                    <behaviors:MouseDragElementBehavior/>
-                                </behaviors:Interaction.Behaviors>-->
                                 <behaviors:Interaction.Triggers>
                                     <behaviors:KeyTrigger FiredOn="KeyDown" Key="Space">
                                         <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, 
@@ -128,16 +124,8 @@
                                         <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, 
                                             Path=DataContext.MouseEnterCmd}"/>
                                     </behaviors:EventTrigger>
-                                    <!--<behaviors:EventTrigger EventName="MouseLeave">
-                                        <behaviors:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.MouseLeaveCmd}"/>
-                                    </behaviors:EventTrigger>-->
                                 </behaviors:Interaction.Triggers>
-                                <!--<Border.RenderTransform>
-                                    <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
-                                </Border.RenderTransform>-->
                             </Border>
-                            <!--<Rectangle Stroke = "DarkOrange" Visibility = "Collapsed" Fill = "#77EEEEEE"></Rectangle>-->
-                            <!--</Canvas>-->
                         </ScrollViewer>
                         <Grid.LayoutTransform>
                             <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>

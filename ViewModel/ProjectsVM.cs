@@ -33,8 +33,6 @@ namespace PixelDrawer.ViewModel
             {
                 selectedProject = value;
                 var layersListBox = Application.Current.MainWindow.FindName("layersView") as ListBox;
-                //layersListBox.ItemsSource = GetLayersView(selectedProject);
-                //layersListBox.Items.Clear();
                 var binding = new Binding();
                 binding.Source = GetLayersView(selectedProject);
                 binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;

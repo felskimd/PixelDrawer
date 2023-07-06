@@ -305,6 +305,19 @@ namespace PixelDrawer.ViewModel
                     }));
             }
         }
+
+        private RelayCommand? exitAppCmd;
+        public RelayCommand ExitAppCmd
+        {
+            get
+            {
+                return exitAppCmd ??
+                    (exitAppCmd = new RelayCommand(obj =>
+                    {
+                        Application.Current.Shutdown();
+                    }));
+            }
+        }
         #endregion
 
         private void MouseWheel(MouseWheelEventArgs e)

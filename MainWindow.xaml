@@ -30,7 +30,7 @@
                 <MenuItem Header="Save" Command="{Binding SaveCmd}"></MenuItem>
                 <MenuItem Header="Save As" Command="{Binding SaveAsCmd}"></MenuItem>
                 <Separator />
-                <MenuItem Header="Exit" ></MenuItem>
+                <MenuItem Header="Exit" Command="{Binding ExitAppCmd}"></MenuItem>
             </MenuItem>
             <MenuItem Header="Edit" >
                 <MenuItem Header="Undo" Command="{Binding UndoCmd}"></MenuItem>

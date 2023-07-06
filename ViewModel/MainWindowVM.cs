@@ -347,6 +347,7 @@ namespace PixelDrawer.ViewModel
             Points.OldPoint = Points.CurrentPoint;
             Points.CurrentPoint = Application.Current.MainWindow.TranslatePoint(
                 e.GetPosition(Application.Current.MainWindow), CurrentImage);
+            Points.ZoomCenterPoint = Points.CurrentPoint;
             if (e.LeftButton == MouseButtonState.Pressed && Tools.SelectedTool != null && !Keyboard.IsKeyDown(Key.Space))
             {
                 switch (Tools.SelectedTool.ToolId)

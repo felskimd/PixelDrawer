@@ -82,7 +82,7 @@ namespace PixelDrawer.Model
             this.newLayersCount = newLayersCount;
             Width = width;
             Height = height;
-            SelectedLayer = selectedLayer;
+            SelectedLayer = Layers[0];
         }
 
         public Layer AddLayer()

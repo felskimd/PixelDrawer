@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PixelDrawer.ViewModel;
 
-namespace PixelDrawer
+namespace PixelDrawer.View
 {
     /// <summary>
     /// Логика взаимодействия для CreateWindow.xaml

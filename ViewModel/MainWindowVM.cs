@@ -422,7 +422,7 @@ namespace PixelDrawer.ViewModel
 
         private void ShowCreateWindow()
         {
-            CreateWindow createWindow = new CreateWindow();
+            View.CreateWindow createWindow = new View.CreateWindow();
             createWindow.Owner = Application.Current.MainWindow;
             createWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             createWindow.ShowDialog();

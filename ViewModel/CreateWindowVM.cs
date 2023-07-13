@@ -56,12 +56,12 @@ namespace PixelDrawer.ViewModel
                 return acceptCommand ??
                   (acceptCommand = new RelayCommand(obj =>
                   {
-                      AcceptCommandExecute(obj as CreateWindow);
+                      AcceptCommandExecute(obj as View.CreateWindow);
                   }));
             }
         }
 
-        private void AcceptCommandExecute(CreateWindow createWindow)
+        private void AcceptCommandExecute(View.CreateWindow createWindow)
         {
             int width;
             int height;

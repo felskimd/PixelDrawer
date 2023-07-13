@@ -1,4 +1,4 @@
-﻿<Window x:Class="PixelDrawer.MainWindow"
+﻿<Window x:Class="PixelDrawer.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -89,9 +89,9 @@
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <Canvas Width="{Binding Width}" Height="{Binding Height}">
-                                                <Canvas.LayoutTransform>
+                                                <!--<Canvas.LayoutTransform>
                                                     <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
-                                                </Canvas.LayoutTransform>
+                                                </Canvas.LayoutTransform>-->
                                             </Canvas>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
@@ -128,6 +128,9 @@
                                             Path=DataContext.MouseEnterCmd}"/>
                                     </behaviors:EventTrigger>
                                 </behaviors:Interaction.Triggers>
+                                <Border.LayoutTransform>
+                                    <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Border.LayoutTransform>
                             </Border>
                         </ScrollViewer>
                         <!--<Grid.LayoutTransform>

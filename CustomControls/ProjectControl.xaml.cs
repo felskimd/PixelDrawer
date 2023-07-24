@@ -65,5 +65,7 @@ namespace PixelDrawer.CustomControls
                 transform.Y = currentPosition.Y - clickPosition.Y;
             }
         }
+
+        public bool IsDragging() => this.isDragging;
     }
 }

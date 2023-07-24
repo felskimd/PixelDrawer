@@ -84,7 +84,7 @@
                     <DataTemplate x:Name="imgTemplate">
                     <Grid Cursor="Cross" x:Name="grid">
                         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
-                            <Border BorderBrush="Black" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" >
+                            <Border x:Name="border" BorderBrush="Black" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" >
                                 <ItemsControl ItemsSource="{Binding Layers, UpdateSourceTrigger=PropertyChanged}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>

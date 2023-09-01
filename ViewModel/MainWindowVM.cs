@@ -345,7 +345,9 @@ namespace PixelDrawer.ViewModel
 
         private void DrawMouseMove(MouseEventArgs e)
         {
-            Points.OldPoint = Points.CurrentPoint;
+            Points.Point3 = Points.Point2;
+            Points.Point2 = Points.Point1;
+            Points.Point1 = Points.CurrentPoint;
             Points.CurrentPoint = Application.Current.MainWindow.TranslatePoint(
                 e.GetPosition(Application.Current.MainWindow), CurrentImage);
             //Points.ZoomCenterPoint = Points.CurrentPoint;
@@ -357,7 +359,7 @@ namespace PixelDrawer.ViewModel
                         if (Projects.SelectedLayer != null)
                         {
                             var tool0 = Tools.SelectedTool as PencilTool;
-                            tool0.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint, Colors.SelectedColor);
+                            tool0.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint, Points.Point1, Points.Point2, Points.Point3, Colors.SelectedColor);
                         }
                         break;
                     case 1:
@@ -377,6 +379,12 @@ namespace PixelDrawer.ViewModel
                         tool4.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
                         break;
                 }
+            }
+            else if (e.LeftButton == MouseButtonState.Released)
+            {
+                Points.Point1 = null;
+                Points.Point2 = null;
+                Points.Point3 = null;
             }
         }
 

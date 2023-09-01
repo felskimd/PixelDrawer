@@ -63,7 +63,55 @@ namespace PixelDrawer.Model
             size = 1;
         }
 
-        public void Execute(WriteableBitmap bmp, System.Windows.Point currentPoint, System.Windows.Media.Color color)
+        public void Execute(WriteableBitmap bmp, 
+            System.Windows.Point currentPoint, 
+            System.Windows.Point? point1, 
+            System.Windows.Point? point2, 
+            System.Windows.Point? point3, 
+            System.Windows.Media.Color color)
+        {
+            //refactor
+            if (point1 is null)
+            {
+                bmp.MyFillEllipseCentered((int)currentPoint.X, (int)currentPoint.Y, Size, Size, color);
+            }
+            else if (point2 is null)
+            {
+                //bmp.DrawLineAa((int)currentPoint.X, (int)currentPoint.Y, 
+                //    (int)point1.Value.X, (int)point1.Value.Y, color, Size * 2);
+                bmp.MyFillEllipseCentered((int)currentPoint.X, (int)currentPoint.Y, Size, Size, color);
+            }
+            else if (point3 is null)
+            {
+                var dx = point1.Value.X - point2.Value.X;
+                var dy = point1.Value.Y - point2.Value.Y;
+                var prevPoint = new Point(point2.Value.X - dx, point2.Value.Y - dy);
+                var tempPoint = new Point(point2.Value.X, point2.Value.Y);
+                for (double i = 0.025; i < 1.0; i+=0.025)
+                {
+                    var interpolatedPoint = DrawingInterpolation.CatmullRomInterpolation2d(currentPoint, point1 ?? new Point(), point2 ?? new Point(), prevPoint, i);
+                    bmp.DrawLineAa((int)tempPoint.X, (int)tempPoint.Y, (int)interpolatedPoint.X, (int)interpolatedPoint.Y, Size * 2);
+                    bmp.MyFillEllipseCentered((int)interpolatedPoint.X, (int)interpolatedPoint.Y, Size, Size, color);
+                    tempPoint = interpolatedPoint;
+                }
+            }
+            else
+            {
+                var tempPoint = new Point(point2.Value.X, point2.Value.Y);
+                for (double i = 0.025; i < 1.0; i += 0.025)
+                {
+                    var interpolatedPoint = DrawingInterpolation.CatmullRomInterpolation2d(currentPoint, point1 ?? new Point(), point2 ?? new Point(), point3 ?? new Point(), i);
+                    bmp.DrawLineAa((int)tempPoint.X, (int)tempPoint.Y, (int)interpolatedPoint.X, (int)interpolatedPoint.Y, Size * 2);
+                    bmp.MyFillEllipseCentered((int)interpolatedPoint.X, (int)interpolatedPoint.Y, Size, Size, color);
+                    tempPoint = interpolatedPoint;
+                }
+            }
+            //bmp.MyFillEllipseCentered((int)currentPoint.X, (int)currentPoint.Y, Size, Size, color);
+        }
+
+        public void Execute(WriteableBitmap bmp,
+            System.Windows.Point currentPoint,
+            System.Windows.Media.Color color)
         {
             bmp.MyFillEllipseCentered((int)currentPoint.X, (int)currentPoint.Y, Size, Size, color);
         }

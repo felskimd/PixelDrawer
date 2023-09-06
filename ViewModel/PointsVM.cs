@@ -45,6 +45,17 @@ namespace PixelDrawer.ViewModel
             }
         }
 
+        private Point point1TabControl;
+        public Point Point1TabControl
+        {
+            get { return point1TabControl; }
+            set
+            {
+                point1TabControl = value;
+                OnPropertyChanged("Point1TabControl");
+            }
+        }
+
         private Point currentPoint;
         public Point CurrentPoint
         {
@@ -53,6 +64,17 @@ namespace PixelDrawer.ViewModel
             {
                 currentPoint = value;
                 OnPropertyChanged("CurrentPoint");
+            }
+        }
+
+        private Point currentPointTabControl;
+        public Point CurrentPointTabControl
+        {
+            get { return currentPointTabControl; }
+            set
+            {
+                currentPointTabControl = value;
+                OnPropertyChanged("CurrentPointTabControl");
             }
         }
 

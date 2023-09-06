@@ -7,6 +7,7 @@
         xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:PixelDrawer"
         xmlns:vm="clr-namespace:PixelDrawer.ViewModel"
+        xmlns:c="clr-namespace:PixelDrawer.CustomControls"
         mc:Ignorable="d"
         Title="PixelDrawer" Height="800" Width="1200">
     <Window.DataContext>
@@ -89,9 +90,7 @@
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <Canvas Width="{Binding Width}" Height="{Binding Height}">
-                                                <!--<Canvas.LayoutTransform>
-                                                    <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
-                                                </Canvas.LayoutTransform>-->
+                                                
                                             </Canvas>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
@@ -128,17 +127,12 @@
                                             Path=DataContext.MouseEnterCmd}"/>
                                     </behaviors:EventTrigger>
                                 </behaviors:Interaction.Triggers>
-                                <!-- <Border.LayoutTransform>
+                                <!--<Border.RenderTransform>
+                                    --><!--EXPERIMENT <TranslateTransform  />--><!--
                                     <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
-                                </Border.LayoutTransform> -->
-                                <Border.RenderTransform>
-                                    <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
-                                </Border.RenderTransform>
+                                </Border.RenderTransform>-->
                             </Border>
                         </ScrollViewer>
-                        <!--<Grid.LayoutTransform>
-                            <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
-                        </Grid.LayoutTransform>-->
                     </Grid>
                     </DataTemplate>
                 </TabControl.ContentTemplate>

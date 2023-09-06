@@ -29,8 +29,9 @@ namespace PixelDrawer.ViewModel
         public ColorsVM Colors { get; }
         public PointsVM Points { get; }
         public Image CurrentImage { get; set; }
-        public Canvas CurrentCanvas { get; set; }
-        private MouseDragElementBehavior mouseDragElementBehavior;
+        //public Canvas CurrentCanvas { get; set; }
+        public bool IsCanvasDragging { get; private set; }
+        //private MouseDragElementBehavior mouseDragElementBehavior;
 
         public MainWindowVM()
         {
@@ -38,8 +39,8 @@ namespace PixelDrawer.ViewModel
             Projects = new ProjectsVM();
             Colors = new ColorsVM();
             Points = new PointsVM();
-            mouseDragElementBehavior = new MouseDragElementBehavior();
-            mouseDragElementBehavior.DragFinished += ((x,y) => mouseDragElementBehavior.Detach());
+            //mouseDragElementBehavior = new MouseDragElementBehavior();
+            //mouseDragElementBehavior.DragFinished += ((x,y) => mouseDragElementBehavior.Detach());
         }
 
         #region Commands
@@ -281,7 +282,8 @@ namespace PixelDrawer.ViewModel
                             var border = GetBorderFromTabControl(tabControl);
                             border.ForceCursor = true;
                             border.Cursor = Cursors.Hand;
-                            mouseDragElementBehavior.Attach(border);
+                            IsCanvasDragging = true;
+                            //mouseDragElementBehavior.Attach(border);
                         }
                     }));
             }
@@ -301,6 +303,7 @@ namespace PixelDrawer.ViewModel
                             var border = GetBorderFromTabControl(tabControl);
                             border.ForceCursor = false;
                             border.Cursor = Cursors.Cross;
+                            IsCanvasDragging = false;
                         }
                     }));
             }
@@ -327,7 +330,6 @@ namespace PixelDrawer.ViewModel
                 return;
             }
             //Points.ZoomCenterPoint = e.GetPosition(VisualTreeHelperEx.FindDescendantByName(Application.Current.MainWindow, "grid") as Grid);
-            Points.ZoomCenterPoint = e.GetPosition(VisualTreeHelperEx.FindDescendantByName(Application.Current.MainWindow, "border") as Border);
             if (Projects.SelectedProject.Scale < 7)
             {
                 Projects.SelectedProject.Scale += (double)e.Delta / 500;
@@ -341,6 +343,20 @@ namespace PixelDrawer.ViewModel
                 Projects.SelectedProject.Scale += (double)e.Delta / 125;
             }
             Projects.SelectedProject.Scale = Math.Round(Projects.SelectedProject.Scale, 2);
+            var canvas = GetCanvasFromTabControl(Application.Current.MainWindow.FindName("projects") as TabControl);
+            if (canvas.RenderTransform as TransformGroup is null)
+            {
+                var group = new TransformGroup();
+                group.Children.Add(new ScaleTransform());
+                group.Children.Add(new TranslateTransform());
+                canvas.RenderTransform = group;
+            }
+            var scale = (ScaleTransform)(((TransformGroup)canvas.RenderTransform).Children[0]);
+            //Fix ZoomCenter
+            scale.CenterX = Points.ZoomCenterPoint.X;
+            scale.CenterY = Points.ZoomCenterPoint.Y;
+            scale.ScaleX = Projects.SelectedProject.Scale;
+            scale.ScaleY = Projects.SelectedProject.Scale;
         }
 
         private void DrawMouseMove(MouseEventArgs e)
@@ -350,9 +366,27 @@ namespace PixelDrawer.ViewModel
             Points.Point1 = Points.CurrentPoint;
             Points.CurrentPoint = Application.Current.MainWindow.TranslatePoint(
                 e.GetPosition(Application.Current.MainWindow), CurrentImage);
-            //Points.ZoomCenterPoint = Points.CurrentPoint;
-            if (e.LeftButton == MouseButtonState.Pressed && Tools.SelectedTool != null && !Keyboard.IsKeyDown(Key.Space))
+            Points.Point1TabControl = Points.CurrentPointTabControl;
+            Points.CurrentPointTabControl = e.GetPosition(Application.Current.MainWindow.FindName("projects") as TabControl);
+            Points.ZoomCenterPoint = new Point(Points.CurrentPoint.X / 2, Points.CurrentPoint.Y / 2);
+            if (e.LeftButton == MouseButtonState.Pressed && Tools.SelectedTool != null)
             {
+                if (IsCanvasDragging)
+                {
+                    var canvas = GetCanvasFromTabControl(Application.Current.MainWindow.FindName("projects") as TabControl);
+                    if (canvas.RenderTransform as TransformGroup is null)
+                    {
+                        var group = new TransformGroup();
+                        group.Children.Add(new ScaleTransform());
+                        group.Children.Add(new TranslateTransform());
+                        canvas.RenderTransform = group;
+                    }
+                    var translate = (TranslateTransform)(((TransformGroup)canvas.RenderTransform).Children[1]);
+                    var tabCtrl = Application.Current.MainWindow.FindName("projects") as TabControl;
+                    translate.X += Points.CurrentPointTabControl.X - Points.Point1TabControl.X;
+                    translate.Y += Points.CurrentPointTabControl.Y - Points.Point1TabControl.Y;
+                    return;
+                }
                 switch (Tools.SelectedTool.ToolId)
                 {
                     case 0:

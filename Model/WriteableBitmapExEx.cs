@@ -266,5 +266,41 @@ namespace PixelDrawer.Model
 
             return result;
         }
+
+        public static unsafe void MyDrawCircle(this WriteableBitmap bmp, int centerX, int centerY, int size, Color color)
+        {
+            using BitmapContext bitmapContext = bmp.GetBitmapContext();
+            int* pixels = bitmapContext.Pixels;
+            int width = bitmapContext.Width;
+            int height = bitmapContext.Height;
+            int convColor = MyConvertColor(color);
+            int sa = (convColor >> 24) & 0xFF;
+            int sr = (convColor >> 16) & 0xFF;
+            int sg = (convColor >> 8) & 0xFF;
+            int sb = convColor & 0xFF;
+
+            var x = 0;
+            var y = size;
+            var delta = 3 - 2 * y;
+            while (x <= y)
+            {
+                //drawpixel(centerX + x, centerY + y);
+                //drawpixel(centerX + x, centerY - y);
+                //drawpixel(centerX - x, centerY + y);
+                //drawpixel(centerX - x, centerY - y);
+                //drawpixel(centerX + y, centerY + x);
+                //drawpixel(centerX + y, centerY - x);
+                //drawpixel(centerX - y, centerY + x);
+                //drawpixel(centerX - y, centerY - x);
+                //добавить проверки границ
+                pixels[(centerY + y) * width + centerX - x] = MyAlphaBlendColors(pixels[(centerY + y) * width + centerX - x], sa, sr, sg, sb);
+                pixels[(centerY - y) * width + centerX - x] = MyAlphaBlendColors(pixels[(centerY - y) * width + centerX - x], sa, sr, sg, sb);
+                pixels[(centerY + x) * width + centerX - y] = MyAlphaBlendColors(pixels[(centerY + x) * width + centerX - y], sa, sr, sg, sb);
+                pixels[(centerY - x) * width + centerX - y] = MyAlphaBlendColors(pixels[(centerY - x) * width + centerX - y], sa, sr, sg, sb);
+
+                delta += delta < 0 ? 4 * x + 6 : 4 * (x - y--) + 10;
+                ++x;
+            }
+        }
     }
 }

@@ -113,7 +113,8 @@ namespace PixelDrawer.Model
             System.Windows.Point currentPoint,
             System.Windows.Media.Color color)
         {
-            bmp.MyFillEllipseCentered((int)currentPoint.X, (int)currentPoint.Y, Size, Size, color);
+            //bmp.MyFillEllipseCentered((int)currentPoint.X, (int)currentPoint.Y, Size, Size, color);
+            bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, color);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

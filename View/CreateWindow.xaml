@@ -7,11 +7,15 @@
         xmlns:local="clr-namespace:PixelDrawer"
         xmlns:vm="clr-namespace:PixelDrawer.ViewModel"
         mc:Ignorable="d"
-        Title="CreateWindow" Height="150" Width="260" x:Name="createWindow_Window">
+        Title="CreateWindow"  x:Name="createWindow_Window">
     <Window.DataContext>
         <vm:CreateWindowVM/>
     </Window.DataContext>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
         <Grid HorizontalAlignment="Left" VerticalAlignment="Top">
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
@@ -31,7 +35,7 @@
                 <TextBox Name="createWindow_Title" MaxLength="32" MaxLines="1" Text="{Binding TitleText, Mode=TwoWay}"/>
             </GroupBox>
         </Grid>
-        <WrapPanel Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,15,10,10">
+        <WrapPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,10,10,10">
             <Button x:Name="Accept_Button" IsDefault="True" MinWidth="60" Margin="0,0,10,0">Create
                 <behaviors:Interaction.Triggers>
                     <behaviors:EventTrigger EventName="Click">

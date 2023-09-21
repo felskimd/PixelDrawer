@@ -29,9 +29,7 @@ namespace PixelDrawer.ViewModel
         public ColorsVM Colors { get; }
         public PointsVM Points { get; }
         public Image CurrentImage { get; set; }
-        //public Canvas CurrentCanvas { get; set; }
         public bool IsCanvasDragging { get; private set; }
-        //private MouseDragElementBehavior mouseDragElementBehavior;
 
         public MainWindowVM()
         {
@@ -39,8 +37,6 @@ namespace PixelDrawer.ViewModel
             Projects = new ProjectsVM();
             Colors = new ColorsVM();
             Points = new PointsVM();
-            //mouseDragElementBehavior = new MouseDragElementBehavior();
-            //mouseDragElementBehavior.DragFinished += ((x,y) => mouseDragElementBehavior.Detach());
         }
 
         #region Commands
@@ -283,7 +279,6 @@ namespace PixelDrawer.ViewModel
                             border.ForceCursor = true;
                             border.Cursor = Cursors.Hand;
                             IsCanvasDragging = true;
-                            //mouseDragElementBehavior.Attach(border);
                         }
                     }));
             }
@@ -329,7 +324,6 @@ namespace PixelDrawer.ViewModel
             {
                 return;
             }
-            //Points.ZoomCenterPoint = e.GetPosition(VisualTreeHelperEx.FindDescendantByName(Application.Current.MainWindow, "grid") as Grid);
             if (Projects.SelectedProject.Scale < 7)
             {
                 Projects.SelectedProject.Scale += (double)e.Delta / 500;
@@ -538,9 +532,7 @@ namespace PixelDrawer.ViewModel
         private void AddLayer()
         {
             var newLayer = Projects.SelectedProject.AddLayer();
-            //Projects.LayersViews.Where(x => x.RelatedProject == Projects.SelectedProject).First().AddNewLayer(newLayer);
             Projects.SelectedProjectLayersView.AddNewLayer(newLayer);
-
         }
 
         private void TabControlClose()

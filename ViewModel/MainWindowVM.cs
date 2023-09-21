@@ -347,8 +347,9 @@ namespace PixelDrawer.ViewModel
             }
             var scale = (ScaleTransform)(((TransformGroup)canvas.RenderTransform).Children[0]);
             //Fix ZoomCenter
-            scale.CenterX = Points.ZoomCenterPoint.X;
-            scale.CenterY = Points.ZoomCenterPoint.Y;
+            var mousePoint = e.GetPosition(canvas);
+            scale.CenterX = mousePoint.X;
+            scale.CenterY = mousePoint.Y;
             scale.ScaleX = Projects.SelectedProject.Scale;
             scale.ScaleY = Projects.SelectedProject.Scale;
         }
@@ -362,7 +363,6 @@ namespace PixelDrawer.ViewModel
                 e.GetPosition(Application.Current.MainWindow), CurrentImage);
             Points.Point1TabControl = Points.CurrentPointTabControl;
             Points.CurrentPointTabControl = e.GetPosition(Application.Current.MainWindow.FindName("projects") as TabControl);
-            Points.ZoomCenterPoint = new Point(Points.CurrentPoint.X / 2, Points.CurrentPoint.Y / 2);
             if (e.LeftButton == MouseButtonState.Pressed && Tools.SelectedTool != null)
             {
                 if (IsCanvasDragging)

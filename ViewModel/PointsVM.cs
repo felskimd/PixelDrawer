@@ -78,17 +78,6 @@ namespace PixelDrawer.ViewModel
             }
         }
 
-        private Point zoomCenterPoint;
-        public Point ZoomCenterPoint
-        {
-            get { return zoomCenterPoint; }
-            set
-            {
-                zoomCenterPoint = value;
-                OnPropertyChanged("ZoomCenterPoint");
-            }
-        }
-
         public event PropertyChangedEventHandler? PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {

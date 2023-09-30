@@ -278,26 +278,29 @@ namespace PixelDrawer.Model
             int sr = (convColor >> 16) & 0xFF;
             int sg = (convColor >> 8) & 0xFF;
             int sb = convColor & 0xFF;
-
             var x = 0;
             var y = size;
             var delta = 3 - 2 * y;
             while (x <= y)
             {
-                //drawpixel(centerX + x, centerY + y);
-                //drawpixel(centerX + x, centerY - y);
-                //drawpixel(centerX - x, centerY + y);
-                //drawpixel(centerX - x, centerY - y);
-                //drawpixel(centerX + y, centerY + x);
-                //drawpixel(centerX + y, centerY - x);
-                //drawpixel(centerX - y, centerY + x);
-                //drawpixel(centerX - y, centerY - x);
-                //добавить проверки границ
-                pixels[(centerY + y) * width + centerX - x] = MyAlphaBlendColors(pixels[(centerY + y) * width + centerX - x], sa, sr, sg, sb);
-                pixels[(centerY - y) * width + centerX - x] = MyAlphaBlendColors(pixels[(centerY - y) * width + centerX - x], sa, sr, sg, sb);
-                pixels[(centerY + x) * width + centerX - y] = MyAlphaBlendColors(pixels[(centerY + x) * width + centerX - y], sa, sr, sg, sb);
-                pixels[(centerY - x) * width + centerX - y] = MyAlphaBlendColors(pixels[(centerY - x) * width + centerX - y], sa, sr, sg, sb);
-
+                int i1 = centerX - x;
+                while (i1 <= centerX + x) 
+                {
+                    if (i1 >= 0 && i1 < width && centerY + y < height && centerY + y >= 0) 
+                        pixels[(centerY + y) * width + i1] = MyAlphaBlendColors(pixels[(centerY + y) * width + i1], sa, sr, sg, sb);
+                    if (i1 >= 0 && i1 < width && centerY - y < height && centerY - y >= 0)
+                        pixels[(centerY - y) * width + i1] = MyAlphaBlendColors(pixels[(centerY - y) * width + i1], sa, sr, sg, sb);
+                    i1++;
+                }
+                int i2 = centerX - y;
+                while (i2 <= centerX + y) 
+                {
+                    if (i2 >= 0 && i2 < width && centerY + x < height && centerY + x >= 0)
+                        pixels[(centerY + x) * width + i2] = MyAlphaBlendColors(pixels[(centerY + x) * width + i2], sa, sr, sg, sb);
+                    if (i2 >= 0 && i2 < width && centerY - x < height && centerY - x >= 0)
+                        pixels[(centerY - x) * width + i2] = MyAlphaBlendColors(pixels[(centerY - x) * width + i2], sa, sr, sg, sb);
+                    i2++;
+                }
                 delta += delta < 0 ? 4 * x + 6 : 4 * (x - y--) + 10;
                 ++x;
             }

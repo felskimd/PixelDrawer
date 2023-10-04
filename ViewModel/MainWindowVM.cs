@@ -359,10 +359,12 @@ namespace PixelDrawer.ViewModel
             Points.Point3 = Points.Point2;
             Points.Point2 = Points.Point1;
             Points.Point1 = Points.CurrentPoint;
-            Points.CurrentPoint = Application.Current.MainWindow.TranslatePoint(
+            var tempPoint = Application.Current.MainWindow.TranslatePoint(
                 e.GetPosition(Application.Current.MainWindow), CurrentImage);
+            Points.CurrentPoint = new System.Drawing.Point((int)tempPoint.X, (int)tempPoint.Y);
             Points.Point1TabControl = Points.CurrentPointTabControl;
-            Points.CurrentPointTabControl = e.GetPosition(Application.Current.MainWindow.FindName("projects") as TabControl);
+            tempPoint = e.GetPosition(Application.Current.MainWindow.FindName("projects") as TabControl);
+            Points.CurrentPointTabControl = new System.Drawing.Point((int)tempPoint.X, (int)tempPoint.Y);
             if (e.LeftButton == MouseButtonState.Pressed && Tools.SelectedTool != null)
             {
                 if (IsCanvasDragging)

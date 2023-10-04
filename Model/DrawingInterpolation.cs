@@ -10,9 +10,9 @@ namespace PixelDrawer.Model
 {
     internal static class DrawingInterpolation
     {
-        public static System.Windows.Point CatmullRomInterpolation2d(System.Windows.Point value1, System.Windows.Point value2, System.Windows.Point value3, System.Windows.Point value4, double amount)
+        public static Point CatmullRomInterpolation2d(Point value1, Point value2, Point value3, Point value4, double amount)
         {
-            return new System.Windows.Point(
+            return new Point(
                 (int)CatmullRomInterpolation1d(value1.X, value2.X, value3.X, value4.X, amount),
                 (int)CatmullRomInterpolation1d(value1.Y, value2.Y, value3.Y, value4.Y, amount));
         }

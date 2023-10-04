@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
-using System.Windows;
+using System.Drawing;
 
 namespace PixelDrawer.Model
 {
@@ -64,24 +64,25 @@ namespace PixelDrawer.Model
         }
 
         public void Execute(WriteableBitmap bmp, 
-            System.Windows.Point currentPoint, 
-            System.Windows.Point? point1, 
-            System.Windows.Point? point2, 
-            System.Windows.Point? point3, 
+            Point currentPoint, 
+            Point? previousPoint, 
+            Point? prePreviousPoint, 
+            Point? prePrePreviousPoint, 
             System.Windows.Media.Color color)
         {
             bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, color);
-            if (point1.HasValue)
+            if (previousPoint.HasValue)
             {
-                bmp.DrawLineAa((int)point1.Value.X, (int)point1.Value.Y, (int)currentPoint.X, (int)currentPoint.Y, color, Size * 2);
+                //bmp.DrawLineAa((int)previousPoint.Value.X, (int)previousPoint.Value.Y, (int)currentPoint.X, (int)currentPoint.Y, color, Size * 2);
+                bmp.MyDrawLine(previousPoint.Value, currentPoint, Size, color);
             }
         }
 
         public void ExecuteInterpolated(WriteableBitmap bmp,
-            System.Windows.Point currentPoint,
-            System.Windows.Point? point1,
-            System.Windows.Point? point2,
-            System.Windows.Point? point3,
+            Point currentPoint,
+            Point? point1,
+            Point? point2,
+            Point? point3,
             System.Windows.Media.Color color)
         {
             //refactor
@@ -124,7 +125,7 @@ namespace PixelDrawer.Model
         }
 
         public void Execute(WriteableBitmap bmp,
-            System.Windows.Point currentPoint,
+            Point currentPoint,
             System.Windows.Media.Color color)
         {
             bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, color);
@@ -161,7 +162,7 @@ namespace PixelDrawer.Model
         public string ToolName { get { return "Pipette"; } }
         public int ToolId { get { return 2; } }
 
-        public Color Execute(WriteableBitmap bmp, System.Windows.Point currentPoint)
+        public System.Windows.Media.Color Execute(WriteableBitmap bmp, Point currentPoint)
         {
             return bmp.GetPixel((int)currentPoint.X, (int)currentPoint.Y);
         }
@@ -179,9 +180,9 @@ namespace PixelDrawer.Model
         public string ToolName { get { return "Selection"; } }
         public int ToolId { get { return 3; } }
 
-        public Rect Execute(Point firstPoint, Point secondPoint)
+        public Rectangle Execute(Point firstPoint, Point secondPoint)
         {
-            return new Rect(firstPoint, secondPoint);
+            return new Rectangle();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -214,9 +215,9 @@ namespace PixelDrawer.Model
             size = 1;
         }
 
-        public void Execute(WriteableBitmap bmp, System.Windows.Point currentPoint)
+        public void Execute(WriteableBitmap bmp, Point currentPoint)
         {
-            bmp.MyFillEllipseCentered((int)currentPoint.X, (int)currentPoint.Y, Size, Size, Colors.Transparent);
+            bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, Colors.Transparent);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

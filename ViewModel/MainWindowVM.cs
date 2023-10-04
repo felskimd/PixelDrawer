@@ -389,7 +389,7 @@ namespace PixelDrawer.ViewModel
                         if (Projects.SelectedLayer != null)
                         {
                             var tool0 = Tools.SelectedTool as PencilTool;
-                            tool0.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint, Points.Point1, Points.Point2, Points.Point3, Colors.SelectedColor);
+                            tool0.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint, Points.Point1, Colors.SelectedColor);
                         }
                         break;
                     case 1:
@@ -406,7 +406,7 @@ namespace PixelDrawer.ViewModel
                         break;
                     case 4:
                         var tool4 = Tools.SelectedTool as EraserTool;
-                        tool4.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
+                        tool4.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint, Points.Point1);
                         break;
                 }
             }
@@ -445,7 +445,7 @@ namespace PixelDrawer.ViewModel
                         break;
                     case 4:
                         var tool4 = Tools.SelectedTool as EraserTool;
-                        tool4.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint);
+                        tool4.Execute(Projects.SelectedLayer.Bitmap, Points.CurrentPoint, Points.Point1);
                         break;
                 }
             }

@@ -66,8 +66,6 @@ namespace PixelDrawer.Model
         public void Execute(WriteableBitmap bmp, 
             Point currentPoint, 
             Point? previousPoint, 
-            Point? prePreviousPoint, 
-            Point? prePrePreviousPoint, 
             System.Windows.Media.Color color)
         {
             bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, color);
@@ -78,51 +76,51 @@ namespace PixelDrawer.Model
             }
         }
 
-        public void ExecuteInterpolated(WriteableBitmap bmp,
-            Point currentPoint,
-            Point? point1,
-            Point? point2,
-            Point? point3,
-            System.Windows.Media.Color color)
-        {
-            //refactor
-            if (!point1.HasValue)
-            {
-                bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, color);
-            }
-            else if (!point2.HasValue)
-            {
-                //bmp.DrawLineAa((int)currentPoint.X, (int)currentPoint.Y, 
-                //    (int)point1.Value.X, (int)point1.Value.Y, color, Size * 2);
-                bmp.DrawLineAa((int)point1.Value.X, (int)point1.Value.Y, (int)currentPoint.X, (int)currentPoint.Y, color, Size * 2);
-                bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, color);
-            }
-            else if (!point3.HasValue)
-            {
-                var dx = point1.Value.X - point2.Value.X;
-                var dy = point1.Value.Y - point2.Value.Y;
-                var prevPoint = new Point(point2.Value.X - dx, point2.Value.Y - dy);
-                var tempPoint = new Point(point2.Value.X, point2.Value.Y);
-                for (double i = 0.1; i < 1.0; i += 0.1)
-                {
-                    var interpolatedPoint = DrawingInterpolation.CatmullRomInterpolation2d(currentPoint, point1 ?? new Point(), point2 ?? new Point(), prevPoint, i);
-                    bmp.DrawLineAa((int)tempPoint.X, (int)tempPoint.Y, (int)interpolatedPoint.X, (int)interpolatedPoint.Y, color, Size * 2);
-                    bmp.MyDrawCircle((int)interpolatedPoint.X, (int)interpolatedPoint.Y, Size, color);
-                    tempPoint = interpolatedPoint;
-                }
-            }
-            else
-            {
-                var tempPoint = new Point(point2.Value.X, point2.Value.Y);
-                for (double i = 0.1; i < 1.0; i += 0.1)
-                {
-                    var interpolatedPoint = DrawingInterpolation.CatmullRomInterpolation2d(currentPoint, point1 ?? new Point(), point2 ?? new Point(), point3 ?? new Point(), i);
-                    bmp.DrawLineAa((int)tempPoint.X, (int)tempPoint.Y, (int)interpolatedPoint.X, (int)interpolatedPoint.Y, color, Size * 2);
-                    bmp.MyDrawCircle((int)interpolatedPoint.X, (int)interpolatedPoint.Y, Size, color);
-                    tempPoint = interpolatedPoint;
-                }
-            }
-        }
+        //public void ExecuteInterpolated(WriteableBitmap bmp,
+        //    Point currentPoint,
+        //    Point? point1,
+        //    Point? point2,
+        //    Point? point3,
+        //    System.Windows.Media.Color color)
+        //{
+        //    //refactor
+        //    if (!point1.HasValue)
+        //    {
+        //        bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, color);
+        //    }
+        //    else if (!point2.HasValue)
+        //    {
+        //        //bmp.DrawLineAa((int)currentPoint.X, (int)currentPoint.Y, 
+        //        //    (int)point1.Value.X, (int)point1.Value.Y, color, Size * 2);
+        //        bmp.DrawLineAa((int)point1.Value.X, (int)point1.Value.Y, (int)currentPoint.X, (int)currentPoint.Y, color, Size * 2);
+        //        bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, color);
+        //    }
+        //    else if (!point3.HasValue)
+        //    {
+        //        var dx = point1.Value.X - point2.Value.X;
+        //        var dy = point1.Value.Y - point2.Value.Y;
+        //        var prevPoint = new Point(point2.Value.X - dx, point2.Value.Y - dy);
+        //        var tempPoint = new Point(point2.Value.X, point2.Value.Y);
+        //        for (double i = 0.1; i < 1.0; i += 0.1)
+        //        {
+        //            var interpolatedPoint = DrawingInterpolation.CatmullRomInterpolation2d(currentPoint, point1 ?? new Point(), point2 ?? new Point(), prevPoint, i);
+        //            bmp.DrawLineAa((int)tempPoint.X, (int)tempPoint.Y, (int)interpolatedPoint.X, (int)interpolatedPoint.Y, color, Size * 2);
+        //            bmp.MyDrawCircle((int)interpolatedPoint.X, (int)interpolatedPoint.Y, Size, color);
+        //            tempPoint = interpolatedPoint;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        var tempPoint = new Point(point2.Value.X, point2.Value.Y);
+        //        for (double i = 0.1; i < 1.0; i += 0.1)
+        //        {
+        //            var interpolatedPoint = DrawingInterpolation.CatmullRomInterpolation2d(currentPoint, point1 ?? new Point(), point2 ?? new Point(), point3 ?? new Point(), i);
+        //            bmp.DrawLineAa((int)tempPoint.X, (int)tempPoint.Y, (int)interpolatedPoint.X, (int)interpolatedPoint.Y, color, Size * 2);
+        //            bmp.MyDrawCircle((int)interpolatedPoint.X, (int)interpolatedPoint.Y, Size, color);
+        //            tempPoint = interpolatedPoint;
+        //        }
+        //    }
+        //}
 
         public void Execute(WriteableBitmap bmp,
             Point currentPoint,
@@ -215,9 +213,13 @@ namespace PixelDrawer.Model
             size = 1;
         }
 
-        public void Execute(WriteableBitmap bmp, Point currentPoint)
+        public void Execute(WriteableBitmap bmp, Point currentPoint, Point? previousPoint)
         {
             bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, Colors.Transparent);
+            if (previousPoint.HasValue)
+            {
+                bmp.MyDrawLine(previousPoint.Value, currentPoint, Size, Colors.Transparent);
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

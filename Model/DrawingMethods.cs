@@ -43,6 +43,10 @@ namespace PixelDrawer.Model
             int sr = (convColor >> 16) & 0xFF;
             int sg = (convColor >> 8) & 0xFF;
             int sb = convColor & 0xFF;
+            if (size == 0)
+            {
+                pixels[centerY * width + centerX] = MyAlphaBlendColors(pixels[centerY * width + centerX], sa, sr, sg, sb);
+            }
             var x = 0;
             var y = size;
             var delta = 3 - 2 * y;
@@ -71,7 +75,7 @@ namespace PixelDrawer.Model
             }
         }
 
-        public static unsafe void MyDrawLine(this WriteableBitmap bmp, Point startPosition, Point endPosition, int thickness, System.Windows.Media.Color color)
+        public static unsafe void MyDrawLineCircled(this WriteableBitmap bmp, Point startPosition, Point endPosition, int thickness, System.Windows.Media.Color color)
         {
             //using BitmapContext bitmapContext = bmp.GetBitmapContext();
             //int* pixels = bitmapContext.Pixels;

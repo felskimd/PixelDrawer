@@ -52,7 +52,7 @@ namespace PixelDrawer.Model
             get { return size; }
             set
             {
-                if (value <= 0) size = 1;
+                if (value < 0) size = 0;
                 else size = value;
                 OnPropertyChanged("Size");
             }
@@ -60,7 +60,7 @@ namespace PixelDrawer.Model
 
         public PencilTool()
         {
-            size = 1;
+            size = 0;
         }
 
         public void Execute(WriteableBitmap bmp, 
@@ -72,7 +72,7 @@ namespace PixelDrawer.Model
             if (previousPoint.HasValue)
             {
                 //bmp.DrawLineAa((int)previousPoint.Value.X, (int)previousPoint.Value.Y, (int)currentPoint.X, (int)currentPoint.Y, color, Size * 2);
-                bmp.MyDrawLine(previousPoint.Value, currentPoint, Size, color);
+                bmp.MyDrawLineCircled(previousPoint.Value, currentPoint, Size, color);
             }
         }
 
@@ -202,7 +202,7 @@ namespace PixelDrawer.Model
             get { return size; }
             set
             {
-                if (value <= 0) size = 1;
+                if (value < 0) size = 0;
                 else size = value;
                 OnPropertyChanged("Size");
             }
@@ -210,7 +210,7 @@ namespace PixelDrawer.Model
 
         public EraserTool()
         {
-            size = 1;
+            size = 0;
         }
 
         public void Execute(WriteableBitmap bmp, Point currentPoint, Point? previousPoint)
@@ -218,7 +218,7 @@ namespace PixelDrawer.Model
             bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, Colors.Transparent);
             if (previousPoint.HasValue)
             {
-                bmp.MyDrawLine(previousPoint.Value, currentPoint, Size, Colors.Transparent);
+                bmp.MyDrawLineCircled(previousPoint.Value, currentPoint, Size, Colors.Transparent);
             }
         }
 

@@ -215,10 +215,10 @@ namespace PixelDrawer.Model
 
         public void Execute(WriteableBitmap bmp, Point currentPoint, Point? previousPoint)
         {
-            bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, Colors.Transparent);
+            bmp.MyDrawCircleEraser((int)currentPoint.X, (int)currentPoint.Y, Size);
             if (previousPoint.HasValue)
             {
-                bmp.MyDrawLineCircled(previousPoint.Value, currentPoint, Size, Colors.Transparent);
+                bmp.MyDrawLineCircledEraser(previousPoint.Value, currentPoint, Size);
             }
         }
 

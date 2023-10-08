@@ -337,17 +337,17 @@ namespace PixelDrawer.ViewModel
                 Projects.SelectedProject.Scale += (double)e.Delta / 125;
             }
             Projects.SelectedProject.Scale = Math.Round(Projects.SelectedProject.Scale, 2);
-            var canvas = GetCanvasFromTabControl(Application.Current.MainWindow.FindName("projects") as TabControl);
-            if (canvas.RenderTransform as TransformGroup is null)
+            var border = GetBorderFromTabControl(Application.Current.MainWindow.FindName("projects") as TabControl);
+            if (border.RenderTransform as TransformGroup is null)
             {
                 var group = new TransformGroup();
                 group.Children.Add(new ScaleTransform());
                 group.Children.Add(new TranslateTransform());
-                canvas.RenderTransform = group;
+                border.RenderTransform = group;
             }
-            var scale = (ScaleTransform)(((TransformGroup)canvas.RenderTransform).Children[0]);
+            var scale = (ScaleTransform)(((TransformGroup)border.RenderTransform).Children[0]);
             //Fix ZoomCenter
-            var mousePoint = e.GetPosition(canvas);
+            var mousePoint = e.GetPosition(border);
             scale.CenterX = mousePoint.X;
             scale.CenterY = mousePoint.Y;
             scale.ScaleX = Projects.SelectedProject.Scale;
@@ -369,16 +369,15 @@ namespace PixelDrawer.ViewModel
             {
                 if (IsCanvasDragging)
                 {
-                    var canvas = GetCanvasFromTabControl(Application.Current.MainWindow.FindName("projects") as TabControl);
-                    if (canvas.RenderTransform as TransformGroup is null)
+                    var border = GetBorderFromTabControl(Application.Current.MainWindow.FindName("projects") as TabControl);
+                    if (border.RenderTransform as TransformGroup is null)
                     {
                         var group = new TransformGroup();
                         group.Children.Add(new ScaleTransform());
                         group.Children.Add(new TranslateTransform());
-                        canvas.RenderTransform = group;
+                        border.RenderTransform = group;
                     }
-                    var translate = (TranslateTransform)(((TransformGroup)canvas.RenderTransform).Children[1]);
-                    var tabCtrl = Application.Current.MainWindow.FindName("projects") as TabControl;
+                    var translate = (TranslateTransform)(((TransformGroup)border.RenderTransform).Children[1]);
                     translate.X += Points.CurrentPointTabControl.X - Points.Point1TabControl.X;
                     translate.Y += Points.CurrentPointTabControl.Y - Points.Point1TabControl.Y;
                     return;

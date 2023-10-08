@@ -85,7 +85,7 @@
                     <DataTemplate x:Name="imgTemplate">
                     <Grid Cursor="Cross" x:Name="grid">
                         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
-                            <Border x:Name="border" BorderBrush="Black" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" >
+                            <Border x:Name="border" BorderBrush="Black" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <ItemsControl ItemsSource="{Binding Layers, UpdateSourceTrigger=PropertyChanged}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -127,10 +127,6 @@
                                             Path=DataContext.MouseEnterCmd}"/>
                                     </behaviors:EventTrigger>
                                 </behaviors:Interaction.Triggers>
-                                <!--<Border.RenderTransform>
-                                    --><!--EXPERIMENT <TranslateTransform  />--><!--
-                                    <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
-                                </Border.RenderTransform>-->
                             </Border>
                         </ScrollViewer>
                     </Grid>

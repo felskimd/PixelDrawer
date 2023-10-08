@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
-using System.Windows;
+using System.Drawing;
 
 namespace PixelDrawer.Model
 {
@@ -52,7 +52,7 @@ namespace PixelDrawer.Model
             get { return size; }
             set
             {
-                if (value <= 0) size = 1;
+                if (value < 0) size = 0;
                 else size = value;
                 OnPropertyChanged("Size");
             }
@@ -60,12 +60,73 @@ namespace PixelDrawer.Model
 
         public PencilTool()
         {
-            size = 1;
+            size = 0;
         }
 
-        public void Execute(WriteableBitmap bmp, System.Windows.Point currentPoint, System.Windows.Media.Color color)
+        public void Execute(WriteableBitmap bmp, 
+            Point currentPoint, 
+            Point? previousPoint, 
+            System.Windows.Media.Color color)
         {
-            bmp.MyFillEllipseCentered((int)currentPoint.X, (int)currentPoint.Y, Size, Size, color);
+            bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, color);
+            if (previousPoint.HasValue)
+            {
+                //bmp.DrawLineAa((int)previousPoint.Value.X, (int)previousPoint.Value.Y, (int)currentPoint.X, (int)currentPoint.Y, color, Size * 2);
+                bmp.MyDrawLineCircled(previousPoint.Value, currentPoint, Size, color);
+            }
+        }
+
+        //public void ExecuteInterpolated(WriteableBitmap bmp,
+        //    Point currentPoint,
+        //    Point? point1,
+        //    Point? point2,
+        //    Point? point3,
+        //    System.Windows.Media.Color color)
+        //{
+        //    //refactor
+        //    if (!point1.HasValue)
+        //    {
+        //        bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, color);
+        //    }
+        //    else if (!point2.HasValue)
+        //    {
+        //        //bmp.DrawLineAa((int)currentPoint.X, (int)currentPoint.Y, 
+        //        //    (int)point1.Value.X, (int)point1.Value.Y, color, Size * 2);
+        //        bmp.DrawLineAa((int)point1.Value.X, (int)point1.Value.Y, (int)currentPoint.X, (int)currentPoint.Y, color, Size * 2);
+        //        bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, color);
+        //    }
+        //    else if (!point3.HasValue)
+        //    {
+        //        var dx = point1.Value.X - point2.Value.X;
+        //        var dy = point1.Value.Y - point2.Value.Y;
+        //        var prevPoint = new Point(point2.Value.X - dx, point2.Value.Y - dy);
+        //        var tempPoint = new Point(point2.Value.X, point2.Value.Y);
+        //        for (double i = 0.1; i < 1.0; i += 0.1)
+        //        {
+        //            var interpolatedPoint = DrawingInterpolation.CatmullRomInterpolation2d(currentPoint, point1 ?? new Point(), point2 ?? new Point(), prevPoint, i);
+        //            bmp.DrawLineAa((int)tempPoint.X, (int)tempPoint.Y, (int)interpolatedPoint.X, (int)interpolatedPoint.Y, color, Size * 2);
+        //            bmp.MyDrawCircle((int)interpolatedPoint.X, (int)interpolatedPoint.Y, Size, color);
+        //            tempPoint = interpolatedPoint;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        var tempPoint = new Point(point2.Value.X, point2.Value.Y);
+        //        for (double i = 0.1; i < 1.0; i += 0.1)
+        //        {
+        //            var interpolatedPoint = DrawingInterpolation.CatmullRomInterpolation2d(currentPoint, point1 ?? new Point(), point2 ?? new Point(), point3 ?? new Point(), i);
+        //            bmp.DrawLineAa((int)tempPoint.X, (int)tempPoint.Y, (int)interpolatedPoint.X, (int)interpolatedPoint.Y, color, Size * 2);
+        //            bmp.MyDrawCircle((int)interpolatedPoint.X, (int)interpolatedPoint.Y, Size, color);
+        //            tempPoint = interpolatedPoint;
+        //        }
+        //    }
+        //}
+
+        public void Execute(WriteableBitmap bmp,
+            Point currentPoint,
+            System.Windows.Media.Color color)
+        {
+            bmp.MyDrawCircle((int)currentPoint.X, (int)currentPoint.Y, Size, color);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -99,7 +160,7 @@ namespace PixelDrawer.Model
         public string ToolName { get { return "Pipette"; } }
         public int ToolId { get { return 2; } }
 
-        public Color Execute(WriteableBitmap bmp, System.Windows.Point currentPoint)
+        public System.Windows.Media.Color Execute(WriteableBitmap bmp, Point currentPoint)
         {
             return bmp.GetPixel((int)currentPoint.X, (int)currentPoint.Y);
         }
@@ -117,9 +178,9 @@ namespace PixelDrawer.Model
         public string ToolName { get { return "Selection"; } }
         public int ToolId { get { return 3; } }
 
-        public Rect Execute(Point firstPoint, Point secondPoint)
+        public Rectangle Execute(Point firstPoint, Point secondPoint)
         {
-            return new Rect(firstPoint, secondPoint);
+            return new Rectangle();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -141,7 +202,7 @@ namespace PixelDrawer.Model
             get { return size; }
             set
             {
-                if (value <= 0) size = 1;
+                if (value < 0) size = 0;
                 else size = value;
                 OnPropertyChanged("Size");
             }
@@ -149,12 +210,16 @@ namespace PixelDrawer.Model
 
         public EraserTool()
         {
-            size = 1;
+            size = 0;
         }
 
-        public void Execute(WriteableBitmap bmp, System.Windows.Point currentPoint)
+        public void Execute(WriteableBitmap bmp, Point currentPoint, Point? previousPoint)
         {
-            bmp.MyFillEllipseCentered((int)currentPoint.X, (int)currentPoint.Y, Size, Size, Colors.Transparent);
+            bmp.MyDrawCircleEraser((int)currentPoint.X, (int)currentPoint.Y, Size);
+            if (previousPoint.HasValue)
+            {
+                bmp.MyDrawLineCircledEraser(previousPoint.Value, currentPoint, Size);
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

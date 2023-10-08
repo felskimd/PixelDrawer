@@ -7,6 +7,7 @@
         xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:PixelDrawer"
         xmlns:vm="clr-namespace:PixelDrawer.ViewModel"
+        xmlns:c="clr-namespace:PixelDrawer.CustomControls"
         mc:Ignorable="d"
         Title="PixelDrawer" Height="800" Width="1200">
     <Window.DataContext>
@@ -84,14 +85,12 @@
                     <DataTemplate x:Name="imgTemplate">
                     <Grid Cursor="Cross" x:Name="grid">
                         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
-                            <Border BorderBrush="Black" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" >
+                            <Border x:Name="border" BorderBrush="Black" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <ItemsControl ItemsSource="{Binding Layers, UpdateSourceTrigger=PropertyChanged}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <Canvas Width="{Binding Width}" Height="{Binding Height}">
-                                                <!--<Canvas.LayoutTransform>
-                                                    <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
-                                                </Canvas.LayoutTransform>-->
+                                                
                                             </Canvas>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
@@ -128,14 +127,8 @@
                                             Path=DataContext.MouseEnterCmd}"/>
                                     </behaviors:EventTrigger>
                                 </behaviors:Interaction.Triggers>
-                                <Border.LayoutTransform>
-                                    <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
-                                </Border.LayoutTransform>
                             </Border>
                         </ScrollViewer>
-                        <!--<Grid.LayoutTransform>
-                            <ScaleTransform ScaleX="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" ScaleY="{Binding Scale, UpdateSourceTrigger=PropertyChanged}" CenterX="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.X, UpdateSourceTrigger=PropertyChanged}" CenterY="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=DataContext.Points.ZoomCenterPoint.Y, UpdateSourceTrigger=PropertyChanged}"/>
-                        </Grid.LayoutTransform>-->
                     </Grid>
                     </DataTemplate>
                 </TabControl.ContentTemplate>

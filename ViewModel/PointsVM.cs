@@ -5,21 +5,54 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
+using System.Drawing;
 using System.Windows.Media;
 
 namespace PixelDrawer.ViewModel
 {
     class PointsVM: INotifyPropertyChanged
     {
-        private Point oldPoint;
-        public Point OldPoint
+        private Point? point3;
+        public Point? Point3
         {
-            get { return oldPoint; }
+            get { return point3; }
             set
             {
-                oldPoint = value;
-                OnPropertyChanged("OldPoint");
+                point3 = value;
+                OnPropertyChanged("Point3");
+            }
+        }
+
+        private Point? point2;
+        public Point? Point2
+        {
+            get { return point2; }
+            set
+            {
+                point2 = value;
+                OnPropertyChanged("Point2");
+            }
+        }
+
+        private Point? point1;
+        public Point? Point1
+        {
+            get { return point1; }
+            set
+            {
+                point1 = value;
+                OnPropertyChanged("Point1");
+            }
+        }
+
+        private Point point1TabControl;
+        public Point Point1TabControl
+        {
+            get { return point1TabControl; }
+            set
+            {
+                point1TabControl = value;
+                OnPropertyChanged("Point1TabControl");
             }
         }
 
@@ -34,14 +67,14 @@ namespace PixelDrawer.ViewModel
             }
         }
 
-        private Point zoomCenterPoint;
-        public Point ZoomCenterPoint
+        private Point currentPointTabControl;
+        public Point CurrentPointTabControl
         {
-            get { return zoomCenterPoint; }
+            get { return currentPointTabControl; }
             set
             {
-                zoomCenterPoint = value;
-                OnPropertyChanged("ZoomCenterPoint");
+                currentPointTabControl = value;
+                OnPropertyChanged("CurrentPointTabControl");
             }
         }
 
